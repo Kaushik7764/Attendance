@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026-27-1 — Timetable &amp; Attendance</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0B0C0E">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Attendance">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+:root{
+  --paper:#0B0C0E;
+  --panel:#111215;
+  --ink:#F2F2F2;
+  --line:#F2F2F2;
+  --gray:#9A9DA3;
+  --gray-bg:#17181C;
+
+  --eo:#FF7A45;
+  --phy302:#5C9DFF;
+  --ep361:#2DD4BF;
+  --phy306:#F472B6;
+  --ee403:#4ADE80;
+  --phy301:#C084FC;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--ink);
+  padding:44px 32px 60px;
+}
+.wrap{max-width:1200px;margin:0 auto;}
+
+.masthead{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  flex-wrap:wrap; gap:16px;
+  border-bottom:3px solid var(--line);
+  padding-bottom:18px; margin-bottom:20px;
+}
+.eyebrow{
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--gray); margin:0 0 6px;
+}
+h1{
+  font-family:'Archivo',sans-serif; font-weight:800; font-size:30px;
+  margin:0; letter-spacing:-.01em; text-transform:uppercase;
+  color:#fff;
+}
+.legend{ display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--line); }
+.chip{
+  display:flex; align-items:center; gap:6px;
+  font-size:10.5px; padding:6px 10px;
+  border-right:1px solid var(--line);
+  color:var(--ink);
+}
+.chip:last-child{ border-right:none; }
+.sw{ width:8px; height:8px; flex:none; }
+.sw.lab{ background:repeating-linear-gradient(135deg, var(--eo) 0 2px, transparent 2px 4px); }
+
+table{ width:100%; border-collapse:collapse; table-layout:fixed; border:2px solid var(--line); }
+col.timecol{ width:118px; }
+th,td{ border:1px solid var(--line); padding:0; vertical-align:top; }
+thead th{
+  background:#F2F2F2; color:#0B0C0E;
+  font-family:'Archivo',sans-serif; font-weight:700; font-size:12.5px;
+  text-transform:uppercase; letter-spacing:.06em;
+  padding:12px 8px; text-align:center;
+}
+td.timecell{ text-align:center; background:var(--gray-bg); }
+td.timecell .t{ font-size:11.5px; font-weight:600; padding:9px 2px; white-space:nowrap; color:var(--ink); }
+td.timecell.brk .t{ color:var(--gray); font-style:italic; font-weight:400; }
+
+td.cell{ height:62px; background:var(--panel); }
+.slot{
+  height:100%; min-height:62px; padding:8px 9px;
+  display:flex; flex-direction:column; justify-content:center; gap:2px;
+}
+.slot .top{ display:flex; align-items:center; gap:6px; }
+.slot .sw{ width:8px; height:8px; flex:none; }
+.slot .code{ font-family:'Archivo',sans-serif; font-weight:700; font-size:12.5px; }
+.slot .room{ font-size:10.5px; color:var(--gray); }
+.slot .kind{ font-size:9.5px; color:var(--gray); }
+
+.eo .sw{background:var(--eo);} .eo .code{color:var(--eo);}
+.phy302 .sw{background:var(--phy302);} .phy302 .code{color:var(--phy302);}
+.ep361 .sw{background:var(--ep361);} .ep361 .code{color:var(--ep361);}
+.phy306 .sw{background:var(--phy306);} .phy306 .code{color:var(--phy306);}
+.ee403 .sw{background:var(--ee403);} .ee403 .code{color:var(--ee403);}
+.phy301 .sw{background:var(--phy301);} .phy301 .code{color:var(--phy301);}
+
+.lab{ background:repeating-linear-gradient(135deg, var(--panel) 0 7px, #1B1508 7px 8px); }
+.lab .badge{
+  font-size:8.5px; font-weight:700; letter-spacing:.08em;
+  background:var(--eo); color:#0B0C0E; padding:1px 5px; width:fit-content;
+  font-family:'Archivo',sans-serif;
+}
+
+.slot.free{ align-items:center; justify-content:center; background:repeating-linear-gradient(45deg, var(--panel) 0 9px, #0E0F12 9px 10px);}
+.slot.free .code{ font-size:10px; color:#4A4D53; text-transform:uppercase; letter-spacing:.1em; font-weight:500; }
+td.cell.brk .slot.free .code{ color:#5A5D63; }
+td.cell.brk{ background:var(--gray-bg); }
+
+footer.note{
+  margin-top:16px; font-size:10.5px; color:var(--gray);
+  display:flex; gap:20px; flex-wrap:wrap;
+}
+
+/* ---------- shared section styling ---------- */
+.section{ margin-top:48px; }
+.section-head{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  flex-wrap:wrap; gap:12px;
+  border-bottom:3px solid var(--line);
+  padding-bottom:14px; margin-bottom:18px;
+}
+.section-h2{
+  font-family:'Archivo',sans-serif; font-weight:800; font-size:22px;
+  margin:0; letter-spacing:-.01em; text-transform:uppercase; color:#fff;
+}
+.section-sub{font-size:11px; color:var(--gray);}
+
+/* ---------- attendance ---------- */
+.att-cards{display:flex; flex-direction:column; gap:1px; border:2px solid var(--line); margin-bottom:20px;}
+.att-card{background:var(--panel); padding:14px 16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+.att-sw{width:10px; height:10px; flex:none;}
+.att-info{flex:1 1 170px; min-width:150px;}
+.att-code{font-family:'Archivo',sans-serif; font-weight:700; font-size:14px;}
+.att-stats{font-size:10.5px; color:var(--gray); margin-top:3px;}
+.att-bunk{font-size:10.5px; margin-top:4px; font-weight:600;}
+.att-bunk.can{color:#4ADE80;}
+.att-bunk.cant{color:#F87171;}
+.att-pct{font-family:'Archivo',sans-serif; font-weight:800; font-size:18px; min-width:56px; text-align:right;}
+.att-pct.low{color:#F87171;}
+.att-pct.ok{color:#4ADE80;}
+.att-bar{width:100%; height:4px; background:var(--gray-bg); margin-top:6px; overflow:hidden;}
+.att-bar-fill{height:100%;}
+
+.att-actions{display:flex; gap:6px; flex:none;}
+.att-btn{
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600;
+  padding:7px 10px; border:1px solid var(--line); background:transparent; color:var(--ink);
+  cursor:pointer; letter-spacing:.03em; text-transform:uppercase;
+}
+.att-btn:hover{background:var(--gray-bg);}
+.att-btn.present.marked{background:#4ADE80; color:#0B0C0E; border-color:#4ADE80;}
+.att-btn.absent.marked{background:#F87171; color:#0B0C0E; border-color:#F87171;}
+.att-btn.cancelled.marked{background:var(--gray); color:#0B0C0E; border-color:var(--gray);}
+.att-btn.unmarked.marked{background:#FBBF24; color:#0B0C0E; border-color:#FBBF24;}
+
+.att-card.not-scheduled{opacity:.55;}
+.att-off-note{font-size:10.5px; color:var(--gray); font-style:italic;}
+.att-log-anyway{
+  font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600;
+  padding:6px 9px; border:1px dashed var(--gray); background:none; color:var(--gray);
+  cursor:pointer; letter-spacing:.03em; text-transform:uppercase;
+}
+.att-log-anyway:hover{color:var(--ink); border-color:var(--ink);}
+.att-log-status.present_unmarked{color:#FBBF24;}
+
+.att-summary{
+  border:2px solid var(--line); background:var(--panel); padding:14px 16px;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:14px;
+}
+.att-summary-pct{font-family:'Archivo',sans-serif; font-weight:800; font-size:22px;}
+.att-summary-pct.ok{color:#4ADE80;} .att-summary-pct.low{color:#F87171;}
+.att-summary-label{font-size:10.5px; color:var(--gray); text-transform:uppercase; letter-spacing:.05em;}
+.att-summary-flags{display:flex; gap:6px; flex-wrap:wrap; flex:1;}
+.att-flag{
+  font-size:10.5px; padding:4px 8px; border:1px solid #F87171; color:#F87171;
+  font-weight:600;
+}
+.att-summary-clear{font-size:11px; color:#4ADE80;}
+
+.att-holiday-bar{
+  display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap;
+  border:1px dashed var(--gray); padding:10px 14px; margin-bottom:14px; font-size:11px; color:var(--gray);
+}
+.att-holiday-toggle{
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600;
+  padding:6px 10px; border:1px solid var(--line); background:none; color:var(--ink);
+  cursor:pointer; letter-spacing:.03em; text-transform:uppercase;
+}
+.att-holiday-toggle:hover{background:var(--gray-bg);}
+.att-holiday-toggle.active{background:#FBBF24; color:#0B0C0E; border-color:#FBBF24;}
+
+.marks-target-row{display:flex; align-items:center; gap:10px; padding:8px 0 2px; border-top:1px solid var(--gray-bg); margin-top:4px; flex-wrap:wrap;}
+.marks-target-row label{font-size:10.5px; color:var(--gray);}
+.marks-target-row input{
+  font-family:'IBM Plex Mono',monospace; background:var(--gray-bg); border:1px solid var(--line);
+  color:var(--ink); padding:6px 8px; font-size:11px; width:70px;
+}
+.marks-target-msg{font-size:10.5px; color:var(--gray); flex:1;}
+.marks-target-msg.ok{color:#4ADE80;} .marks-target-msg.low{color:#F87171;}
+
+.data-actions{display:flex; gap:10px; flex-wrap:wrap;}
+.data-btn{
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600;
+  padding:8px 12px; border:1px solid var(--line); background:none; color:var(--ink);
+  cursor:pointer; letter-spacing:.03em; text-transform:uppercase;
+}
+.data-btn:hover{background:var(--gray-bg);}
+.data-msg{font-size:10.5px; color:var(--gray); margin-top:8px;}
+
+.att-log{border:2px solid var(--line); background:var(--panel); margin-bottom:8px;}
+.att-log-row{display:flex; align-items:center; gap:10px; padding:8px 14px; border-bottom:1px solid var(--gray-bg); font-size:11px;}
+.att-log-row:last-child{border-bottom:none;}
+.att-log-date{color:var(--gray); min-width:88px;}
+.att-log-code{font-weight:700; flex:1;}
+.att-log-status{text-transform:uppercase; font-size:10px; font-weight:700; letter-spacing:.05em;}
+.att-log-status.present{color:#4ADE80;}
+.att-log-status.absent{color:#F87171;}
+.att-log-status.cancelled{color:var(--gray);}
+.att-log-remove{cursor:pointer; color:var(--gray); font-size:11px; border:none; background:none; font-family:inherit;}
+.att-log-remove:hover{color:#F87171;}
+.att-empty{padding:20px; text-align:center; color:var(--gray); font-size:11px;}
+
+/* ---------- marks ---------- */
+.marks-grid{display:flex; flex-direction:column; gap:1px; border:2px solid var(--line);}
+.marks-course{background:var(--panel);}
+.marks-course-head{
+  display:flex; align-items:center; gap:10px; padding:12px 16px;
+  border-bottom:1px solid var(--gray-bg);
+}
+.marks-total{margin-left:auto; font-family:'Archivo',sans-serif; font-weight:800; font-size:16px;}
+.marks-total.low{color:#F87171;}
+.marks-total.ok{color:#4ADE80;}
+.marks-rows{padding:6px 16px 12px;}
+.marks-row{display:grid; grid-template-columns:1fr 90px 20px 90px 28px; gap:8px; align-items:center; padding:5px 0;}
+.marks-row input{
+  font-family:'IBM Plex Mono',monospace; background:var(--gray-bg); border:1px solid var(--line);
+  color:var(--ink); padding:6px 8px; font-size:11px; width:100%;
+}
+.marks-sep{color:var(--gray); text-align:center; font-size:11px;}
+.marks-remove{cursor:pointer; color:var(--gray); background:none; border:none; font-size:14px; font-family:inherit;}
+.marks-remove:hover{color:#F87171;}
+.marks-add{
+  margin-top:6px; font-size:10.5px; font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+  background:none; border:1px dashed var(--gray); color:var(--gray); padding:6px 10px; cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;
+}
+.marks-add:hover{color:var(--ink); border-color:var(--ink);}
+.marks-empty{font-size:10.5px; color:var(--gray); padding:4px 0 8px;}
+
+.footnote{margin-top:16px; font-size:10.5px; color:var(--gray);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===================== TIMETABLE ===================== -->
+  <div class="masthead">
+    <div>
+      <p class="eyebrow">Semester 2026-27-1</p>
+      <h1>My Time Table</h1>
+    </div>
+    <div class="legend">
+      <span class="chip"><span class="sw" style="background:var(--eo)"></span>EO-301</span>
+      <span class="chip"><span class="sw" style="background:var(--phy302)"></span>PHY-302</span>
+      <span class="chip"><span class="sw" style="background:var(--ep361)"></span>EP-361</span>
+      <span class="chip"><span class="sw" style="background:var(--phy306)"></span>PHY-306</span>
+      <span class="chip"><span class="sw" style="background:var(--ee403)"></span>EE-403</span>
+      <span class="chip"><span class="sw" style="background:var(--phy301)"></span>PHY-301</span>
+      <span class="chip"><span class="sw lab"></span>Digital Lab</span>
+    </div>
+  </div>
+
+  <table>
+    <colgroup><col class="timecol"><col><col><col><col><col></colgroup>
+    <thead><tr><th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="timecell"><div class="t">08:00–08:55</div></td>
+        <td class="cell" rowspan="2"><div class="slot eo"><div class="top"><span class="sw"></span><span class="code">EO-301 (F)</span></div><div class="room">G-14</div><div class="kind">Electronics</div></div></td>
+        <td class="cell"><div class="slot phy302"><div class="top"><span class="sw"></span><span class="code">PHY-302 (A)</span></div><div class="room">LT3.4B</div></div></td>
+        <td class="cell"><div class="slot phy302"><div class="top"><span class="sw"></span><span class="code">PHY-302 (A)</span></div><div class="room">LT3.4B</div></div></td>
+        <td class="cell"><div class="slot eo"><div class="top"><span class="sw"></span><span class="code">EO-301 (F)</span></div><div class="room">G-14</div><div class="kind">Electronics</div></div></td>
+        <td class="cell"><div class="slot phy302"><div class="top"><span class="sw"></span><span class="code">PHY-302 (A)</span></div><div class="room">LT3.4B</div></div></td>
+      </tr>
+      <tr>
+        <td class="timecell"><div class="t">09:00–09:55</div></td>
+        <td class="cell"><div class="slot ep361"><div class="top"><span class="sw"></span><span class="code">EP-361 (B)</span></div><div class="room">T3 · D&amp;V</div></div></td>
+        <td class="cell"><div class="slot ep361"><div class="top"><span class="sw"></span><span class="code">EP-361 (B)</span></div><div class="room">T3 · D&amp;V</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot ep361"><div class="top"><span class="sw"></span><span class="code">EP-361 (B)</span></div><div class="room">T3 · D&amp;V</div></div></td>
+      </tr>
+      <tr>
+        <td class="timecell"><div class="t">10:00–10:55</div></td>
+        <td class="cell" rowspan="2"><div class="slot ee403"><div class="top"><span class="sw"></span><span class="code">EE-403 (G)</span></div><div class="room">G-10</div><div class="kind">Electrical Eng.</div></div></td>
+        <td class="cell"><div class="slot phy306"><div class="top"><span class="sw"></span><span class="code">PHY-306 (C)</span></div><div class="room">T1 · D&amp;V</div></div></td>
+        <td class="cell"><div class="slot phy306"><div class="top"><span class="sw"></span><span class="code">PHY-306 (C)</span></div><div class="room">T1 · D&amp;V</div></div></td>
+        <td class="cell" rowspan="2"><div class="slot ee403"><div class="top"><span class="sw"></span><span class="code">EE-403 (G)</span></div><div class="room">G-10</div><div class="kind">Electrical Eng.</div></div></td>
+        <td class="cell"><div class="slot phy306"><div class="top"><span class="sw"></span><span class="code">PHY-306 (C)</span></div><div class="room">T1 · D&amp;V</div></div></td>
+      </tr>
+      <tr>
+        <td class="timecell"><div class="t">11:00–11:25</div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+      </tr>
+      <tr>
+        <td class="timecell brk"><div class="t">11:25–13:30</div></td>
+        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
+        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
+        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
+        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
+        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
+      </tr>
+      <tr>
+        <td class="timecell"><div class="t">13:30–14:25</div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell" rowspan="2"><div class="slot lab"><div class="badge">LAB</div><div class="code" style="color:var(--eo)">EO-301 (Lab-7)</div><div class="room">Digital Lab</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+      </tr>
+      <tr>
+        <td class="timecell"><div class="t">14:30–15:25</div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot phy301"><div class="top"><span class="sw"></span><span class="code">PHY-301 (J)</span></div><div class="room">LT3.2B</div></div></td>
+        <td class="cell"><div class="slot phy301"><div class="top"><span class="sw"></span><span class="code">PHY-301 (J)</span></div><div class="room">LT3.2B</div></div></td>
+        <td class="cell"><div class="slot phy301"><div class="top"><span class="sw"></span><span class="code">PHY-301 (J)</span></div><div class="room">LT3.2B</div></div></td>
+      </tr>
+      <tr>
+        <td class="timecell"><div class="t">15:30–16:25</div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell" rowspan="2"><div class="slot lab"><div class="badge">LAB</div><div class="code" style="color:var(--eo)">EO-301 (Lab-10)</div><div class="room">Digital Lab</div></div></td>
+      </tr>
+      <tr>
+        <td class="timecell"><div class="t">16:30–17:25</div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer class="note">
+    <span>Striped fill = Digital Lab</span>
+    <span>Diagonal hatch = free / unscheduled</span>
+    <span>08:00–17:25, five days</span>
+  </footer>
+
+  <!-- ===================== ATTENDANCE ===================== -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Mark today &amp; track the bunk margin</p>
+        <h2 class="section-h2">Attendance</h2>
+      </div>
+      <div class="section-sub" id="att-today"></div>
+    </div>
+
+    <div class="att-summary" id="att-summary"></div>
+    <div class="att-holiday-bar" id="att-holiday-bar"></div>
+    <div class="att-cards" id="att-cards"></div>
+
+    <div class="att-log" id="att-log"></div>
+    <p class="footnote">Only subjects on today's timetable show mark buttons by default — use "+ Log anyway" for extra/weekend classes or makeup sessions. 75% is the assumed minimum; cancelled classes don't count toward the total. "Present (unmarked)" is for when you attended but the faculty didn't record it — it counts toward your own total but stays tagged so you can follow up.</p>
+  </div>
+
+  <!-- ===================== MARKS ===================== -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Component-wise breakdown per course</p>
+        <h2 class="section-h2">Marks Distribution</h2>
+      </div>
+    </div>
+
+    <div class="marks-grid" id="marks-grid"></div>
+    <p class="footnote">Add a row per component (quiz, midsem, assignment, endsem...). Total is obtained ÷ max across all components, as a percentage. Set a target % per course to see what you need in the components you haven't gotten marks for yet.</p>
+  </div>
+
+  <!-- ===================== DATA / BACKUP ===================== -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">This data only lives in this artifact</p>
+        <h2 class="section-h2">Backup</h2>
+      </div>
+    </div>
+    <div class="data-actions">
+      <button class="data-btn" id="export-btn">Export backup (.json)</button>
+      <button class="data-btn" id="import-btn">Import backup</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none;">
+    </div>
+    <p class="data-msg" id="data-msg">Export regularly, especially before switching devices — nothing here syncs anywhere else.</p>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const COURSES = [
+    {code:"EO-301",  name:"Electronics",    cls:"eo",     color:"#FF7A45"},
+    {code:"PHY-302", name:"",               cls:"phy302", color:"#5C9DFF"},
+    {code:"EP-361",  name:"D&V",            cls:"ep361",  color:"#2DD4BF"},
+    {code:"PHY-306", name:"D&V",            cls:"phy306", color:"#F472B6"},
+    {code:"EE-403",  name:"Electrical Eng.",cls:"ee403",  color:"#4ADE80"},
+    {code:"PHY-301", name:"",               cls:"phy301", color:"#C084FC"},
+  ];
+  const THRESHOLD = 0.75;
+  const ATT_KEY = "attendance-records";
+  const MARKS_KEY = "marks-records";
+  const HOLIDAY_KEY = "holiday-dates";
+
+  // Which courses actually meet on each weekday, derived from the timetable.
+  // 0=Sunday ... 6=Saturday
+  const SCHEDULE = {
+    0: [],
+    1: ["EO-301", "EE-403"],
+    2: ["PHY-302", "EP-361", "PHY-306", "PHY-301"],
+    3: ["PHY-302", "EP-361", "PHY-306", "PHY-301"],
+    4: ["EO-301", "EE-403"],
+    5: ["PHY-302", "EP-361", "PHY-306", "PHY-301", "EO-301"],
+    6: [],
+  };
+
+  let records = [];     // attendance: {id, date, code, status}
+  let marks = {};        // marks: { courseCode: { rows: [{id, name, obtained, total}], target: '' } }
+  let holidays = new Set(); // date strings marked as holidays
+  let loggedAnyway = new Set(); // course codes toggled open today despite not being scheduled
+
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+  function fmtDateHeader(){
+    document.getElementById('att-today').textContent =
+      new Date().toLocaleDateString(undefined, {weekday:'long', year:'numeric', month:'short', day:'numeric'});
+  }
+
+  /* ---------------- storage ---------------- */
+  async function loadAll(){
+    try{
+      const v = localStorage.getItem(ATT_KEY);
+      records = v ? JSON.parse(v) : [];
+    }catch(e){ records = []; }
+    try{
+      const v2 = localStorage.getItem(MARKS_KEY);
+      marks = v2 ? JSON.parse(v2) : {};
+    }catch(e){ marks = {}; }
+    try{
+      const v3 = localStorage.getItem(HOLIDAY_KEY);
+      const list = v3 ? JSON.parse(v3) : [];
+      holidays = new Set(list);
+    }catch(e){ holidays = new Set(); }
+
+    COURSES.forEach(c => {
+      const existing = marks[c.code];
+      if(Array.isArray(existing)) marks[c.code] = {rows: existing, target: ''};
+      else if(!existing) marks[c.code] = {rows: [], target: ''};
+      else marks[c.code] = {rows: existing.rows || [], target: existing.target || ''};
+    });
+
+    renderAttendance();
+    renderMarks();
+  }
+
+  async function saveAtt(){
+    try{ localStorage.setItem(ATT_KEY, JSON.stringify(records)); }
+    catch(e){ console.error('Storage error', e); }
+  }
+  async function saveMarks(){
+    try{ localStorage.setItem(MARKS_KEY, JSON.stringify(marks)); }
+    catch(e){ console.error('Storage error', e); }
+  }
+  async function saveHolidays(){
+    try{ localStorage.setItem(HOLIDAY_KEY, JSON.stringify([...holidays])); }
+    catch(e){ console.error('Storage error', e); }
+  }
+  function toggleHolidayToday(){
+    const date = todayStr();
+    if(holidays.has(date)) holidays.delete(date);
+    else holidays.add(date);
+    saveHolidays();
+    renderAttendance();
+  }
+
+  /* ---------------- attendance logic ---------------- */
+  function statsFor(code){
+    const recs = records.filter(r => r.code === code && r.status !== 'cancelled');
+    const total = recs.length;
+    const present = recs.filter(r => r.status === 'present' || r.status === 'present_unmarked').length;
+    const pct = total === 0 ? null : (present/total)*100;
+
+    // bunk margin: max extra absences while staying >= THRESHOLD, or classes needed to reach it
+    let bunk = null, mode = null;
+    if(total > 0){
+      if(pct === null || present/total >= THRESHOLD){
+        bunk = Math.floor((present / THRESHOLD) - total);
+        mode = 'can';
+      } else {
+        bunk = Math.ceil((THRESHOLD*total - present) / (1 - THRESHOLD));
+        mode = 'cant';
+      }
+    }
+    return {total, present, pct, bunk, mode};
+  }
+
+  function markToday(code, status){
+    const date = todayStr();
+    const idx = records.findIndex(r => r.code === code && r.date === date);
+    if(idx >= 0){
+      if(records[idx].status === status) records.splice(idx, 1);
+      else records[idx].status = status;
+    } else {
+      records.push({id: Date.now()+"-"+code, date, code, status});
+    }
+    saveAtt();
+    renderAttendance();
+  }
+
+  function removeRecord(id){
+    records = records.filter(r => r.id !== id);
+    saveAtt();
+    renderAttendance();
+  }
+
+  function renderAttendance(){
+    const date = todayStr();
+    const dayIdx = new Date().getDay();
+    const isHoliday = holidays.has(date);
+    const scheduledToday = new Set(isHoliday ? [] : (SCHEDULE[dayIdx] || []));
+
+    // ---- summary banner ----
+    let sumPresent = 0, sumTotal = 0;
+    const lowCourses = [];
+    COURSES.forEach(course => {
+      const s = statsFor(course.code);
+      sumPresent += s.present; sumTotal += s.total;
+      if(s.pct !== null && s.pct < THRESHOLD*100) lowCourses.push(course.code);
+    });
+    const overallPct = sumTotal === 0 ? null : (sumPresent/sumTotal)*100;
+    const summaryEl = document.getElementById('att-summary');
+    summaryEl.innerHTML = `
+      <div>
+        <div class="att-summary-label">Overall</div>
+        <div class="att-summary-pct ${overallPct===null?'':(overallPct>=THRESHOLD*100?'ok':'low')}">${overallPct===null?'—':Math.round(overallPct)+'%'}</div>
+      </div>
+      <div class="att-summary-flags">
+        ${lowCourses.length === 0
+          ? '<span class="att-summary-clear">All courses at or above 75%</span>'
+          : lowCourses.map(c => `<span class="att-flag">${c} below 75%</span>`).join('')}
+      </div>
+    `;
+
+    // ---- holiday bar ----
+    const holidayEl = document.getElementById('att-holiday-bar');
+    holidayEl.innerHTML = `
+      <span>${isHoliday ? 'Today is marked as a holiday — no classes expected.' : "Not a holiday. If today's a declared holiday, mark it so the schedule doesn't expect classes."}</span>
+      <button class="att-holiday-toggle ${isHoliday?'active':''}" id="holiday-toggle-btn">${isHoliday ? 'Unmark holiday' : 'Mark today as holiday'}</button>
+    `;
+    document.getElementById('holiday-toggle-btn').addEventListener('click', toggleHolidayToday);
+
+    const cardsEl = document.getElementById('att-cards');
+    cardsEl.innerHTML = '';
+    COURSES.forEach(course => {
+      const s = statsFor(course.code);
+      const todayRec = records.find(r => r.code === course.code && r.date === date);
+      const pctLabel = s.pct === null ? '—' : Math.round(s.pct) + '%';
+      const pctClass = s.pct === null ? '' : (s.pct >= THRESHOLD*100 ? 'ok' : 'low');
+      const isScheduled = scheduledToday.has(course.code);
+      const showActions = isScheduled || loggedAnyway.has(course.code) || !!todayRec;
+
+      let bunkLabel = 'No classes logged yet';
+      let bunkClass = '';
+      if(s.total > 0){
+        if(s.mode === 'can'){
+          bunkLabel = s.bunk <= 0 ? 'At the line — one more miss drops you below 75%' : `Can bunk ${s.bunk} more class${s.bunk===1?'':'es'}`;
+          bunkClass = 'can';
+        } else {
+          bunkLabel = `Must attend next ${s.bunk} class${s.bunk===1?'':'es'} to reach 75%`;
+          bunkClass = 'cant';
+        }
+      }
+
+      const actionsHtml = showActions ? `
+        <div class="att-actions">
+          <button class="att-btn present ${todayRec && todayRec.status==='present' ? 'marked':''}" data-code="${course.code}" data-status="present">Present</button>
+          <button class="att-btn absent ${todayRec && todayRec.status==='absent' ? 'marked':''}" data-code="${course.code}" data-status="absent">Absent</button>
+          <button class="att-btn unmarked ${todayRec && todayRec.status==='present_unmarked' ? 'marked':''}" data-code="${course.code}" data-status="present_unmarked" title="You attended but the faculty didn't mark it">Present (unmarked)</button>
+          <button class="att-btn cancelled ${todayRec && todayRec.status==='cancelled' ? 'marked':''}" data-code="${course.code}" data-status="cancelled">Cancelled</button>
+        </div>
+      ` : `
+        <div class="att-actions">
+          <span class="att-off-note">Not on schedule today</span>
+          <button class="att-log-anyway" data-code="${course.code}">+ Log anyway</button>
+        </div>
+      `;
+
+      const card = document.createElement('div');
+      card.className = 'att-card' + (showActions ? '' : ' not-scheduled');
+      card.innerHTML = `
+        <span class="att-sw" style="background:${course.color}"></span>
+        <div class="att-info">
+          <div class="att-code">${course.code}${course.name ? ' · '+course.name : ''}</div>
+          <div class="att-stats">${s.present}/${s.total} attended</div>
+          <div class="att-bar"><div class="att-bar-fill" style="width:${s.pct===null?0:s.pct}%; background:${course.color}"></div></div>
+          <div class="att-bunk ${bunkClass}">${bunkLabel}</div>
+        </div>
+        <div class="att-pct ${pctClass}">${pctLabel}</div>
+        ${actionsHtml}
+      `;
+      cardsEl.appendChild(card);
+    });
+
+    cardsEl.querySelectorAll('.att-btn').forEach(btn => {
+      btn.addEventListener('click', () => markToday(btn.dataset.code, btn.dataset.status));
+    });
+    cardsEl.querySelectorAll('.att-log-anyway').forEach(btn => {
+      btn.addEventListener('click', () => {
+        loggedAnyway.add(btn.dataset.code);
+        renderAttendance();
+      });
+    });
+
+    const logEl = document.getElementById('att-log');
+    logEl.innerHTML = '';
+    if(records.length === 0){
+      logEl.innerHTML = '<div class="att-empty">No entries yet — mark today\'s classes above.</div>';
+    } else {
+      const sorted = [...records].sort((a,b) => b.date.localeCompare(a.date) || a.code.localeCompare(b.code));
+      sorted.forEach(r => {
+        const row = document.createElement('div');
+        row.className = 'att-log-row';
+        const statusLabel = r.status === 'present_unmarked' ? 'present (unmarked)' : r.status;
+        row.innerHTML = `
+          <span class="att-log-date">${r.date}</span>
+          <span class="att-log-code">${r.code}</span>
+          <span class="att-log-status ${r.status}">${statusLabel}</span>
+          <button class="att-log-remove" data-id="${r.id}">remove</button>
+        `;
+        logEl.appendChild(row);
+      });
+      logEl.querySelectorAll('.att-log-remove').forEach(btn => {
+        btn.addEventListener('click', () => removeRecord(btn.dataset.id));
+      });
+    }
+  }
+
+  /* ---------------- marks logic ---------------- */
+  function marksTotals(code){
+    const rows = (marks[code] && marks[code].rows) || [];
+    let obt = 0, tot = 0;
+    rows.forEach(r => {
+      const o = parseFloat(r.obtained), t = parseFloat(r.total);
+      if(!isNaN(o)) obt += o;
+      if(!isNaN(t)) tot += t;
+    });
+    const pct = tot > 0 ? (obt/tot)*100 : null;
+    return {obt, tot, pct};
+  }
+
+  function targetCalc(code){
+    const course = marks[code];
+    const target = parseFloat(course.target);
+    if(course.target === '' || isNaN(target)) return {text:'Set a target % to see what you need in the rest.', cls:''};
+    const rows = course.rows || [];
+    let obtainedSoFar = 0, doneMax = 0, pendingMax = 0;
+    rows.forEach(r => {
+      const t = parseFloat(r.total);
+      if(isNaN(t)) return;
+      if(r.obtained !== '' && !isNaN(parseFloat(r.obtained))){
+        obtainedSoFar += parseFloat(r.obtained);
+        doneMax += t;
+      } else {
+        pendingMax += t;
+      }
+    });
+    const totalMax = doneMax + pendingMax;
+    if(totalMax === 0) return {text:'Add components with a max marks value first.', cls:''};
+    const neededTotal = (target/100) * totalMax;
+    const neededFromPending = neededTotal - obtainedSoFar;
+    const currentPct = doneMax > 0 ? (obtainedSoFar/doneMax)*100 : null;
+    if(pendingMax === 0){
+      const finalPct = (obtainedSoFar/totalMax)*100;
+      return finalPct >= target
+        ? {text:`No components left — target met (${Math.round(finalPct*10)/10}%).`, cls:'ok'}
+        : {text:`No components left — target of ${target}% not reached (${Math.round(finalPct*10)/10}%).`, cls:'low'};
+    }
+    if(neededFromPending <= 0) return {text:`Target already secured with the remaining ${pendingMax} marks untouched.`, cls:'ok'};
+    if(neededFromPending > pendingMax) return {text:`Not reachable — would need ${Math.round(neededFromPending*10)/10}/${pendingMax} in what's left.`, cls:'low'};
+    return {text:`Need ${Math.round(neededFromPending*10)/10}/${pendingMax} in the remaining components to hit ${target}%.`, cls:'ok'};
+  }
+
+  function updateTarget(code, value){
+    marks[code].target = value;
+    saveMarks();
+    const block = document.querySelector(`.marks-course[data-course="${code}"]`);
+    if(block){
+      const msgEl = block.querySelector('.marks-target-msg');
+      const r = targetCalc(code);
+      msgEl.textContent = r.text;
+      msgEl.className = 'marks-target-msg ' + r.cls;
+    }
+  }
+
+  function addComponent(code){
+    marks[code].rows.push({id: Date.now()+"-"+code, name:'', obtained:'', total:''});
+    saveMarks();
+    renderMarks();
+  }
+  function removeComponent(code, id){
+    marks[code].rows = marks[code].rows.filter(r => r.id !== id);
+    saveMarks();
+    renderMarks();
+  }
+  function updateComponent(code, id, field, value){
+    const row = marks[code].rows.find(r => r.id === id);
+    if(row){ row[field] = value; saveMarks(); }
+  }
+
+  function renderMarks(){
+    const grid = document.getElementById('marks-grid');
+    grid.innerHTML = '';
+    COURSES.forEach(course => {
+      const rows = (marks[course.code] && marks[course.code].rows) || [];
+      const t = marksTotals(course.code);
+      const totLabel = t.pct === null ? '—' : Math.round(t.pct*10)/10 + '%';
+      const totClass = t.pct === null ? '' : (t.pct >= 40 ? 'ok' : 'low');
+      const targetVal = (marks[course.code] && marks[course.code].target) || '';
+      const targetResult = targetCalc(course.code);
+
+      const block = document.createElement('div');
+      block.className = 'marks-course';
+      block.dataset.course = course.code;
+      block.innerHTML = `
+        <div class="marks-course-head">
+          <span class="att-sw" style="background:${course.color}"></span>
+          <span class="att-code">${course.code}${course.name ? ' · '+course.name : ''}</span>
+          <span class="marks-total ${totClass}">${totLabel}</span>
+        </div>
+        <div class="marks-rows" data-code="${course.code}">
+          ${rows.length === 0 ? '<div class="marks-empty">No components added yet.</div>' : ''}
+        </div>
+      `;
+      const rowsEl = block.querySelector('.marks-rows');
+      rows.forEach(r => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'marks-row';
+        rowEl.innerHTML = `
+          <input type="text" placeholder="Component (e.g. Midsem)" value="${r.name.replace(/"/g,'&quot;')}" data-field="name" data-id="${r.id}">
+          <input type="number" placeholder="Obtained" value="${r.obtained}" data-field="obtained" data-id="${r.id}">
+          <span class="marks-sep">/</span>
+          <input type="number" placeholder="Max" value="${r.total}" data-field="total" data-id="${r.id}">
+          <button class="marks-remove" data-id="${r.id}" title="Remove">×</button>
+        `;
+        rowsEl.appendChild(rowEl);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.className = 'marks-add';
+      addBtn.textContent = '+ Add component';
+      addBtn.addEventListener('click', () => addComponent(course.code));
+      block.appendChild(addBtn);
+
+      const targetRow = document.createElement('div');
+      targetRow.className = 'marks-target-row';
+      targetRow.innerHTML = `
+        <label>Target</label>
+        <input type="number" placeholder="%" value="${targetVal}" class="marks-target-input">
+        <span class="marks-target-msg ${targetResult.cls}">${targetResult.text}</span>
+      `;
+      block.appendChild(targetRow);
+      targetRow.querySelector('.marks-target-input').addEventListener('input', (e) => updateTarget(course.code, e.target.value));
+
+      rowsEl.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', () => {
+          updateComponent(course.code, inp.dataset.id, inp.dataset.field, inp.value);
+          // live-update the total and target message without a full re-render (keeps focus)
+          const t2 = marksTotals(course.code);
+          const totEl = block.querySelector('.marks-total');
+          totEl.textContent = t2.pct === null ? '—' : Math.round(t2.pct*10)/10 + '%';
+          totEl.className = 'marks-total ' + (t2.pct === null ? '' : (t2.pct >= 40 ? 'ok' : 'low'));
+          const r2 = targetCalc(course.code);
+          const msgEl = block.querySelector('.marks-target-msg');
+          msgEl.textContent = r2.text;
+          msgEl.className = 'marks-target-msg ' + r2.cls;
+        });
+      });
+      block.querySelectorAll('.marks-remove').forEach(btn => {
+        btn.addEventListener('click', () => removeComponent(course.code, btn.dataset.id));
+      });
+
+      grid.appendChild(block);
+    });
+  }
+
+  /* ---------------- backup ---------------- */
+  function wireBackup(){
+    const exportBtn = document.getElementById('export-btn');
+    const importBtn = document.getElementById('import-btn');
+    const importFile = document.getElementById('import-file');
+    const msgEl = document.getElementById('data-msg');
+
+    exportBtn.addEventListener('click', () => {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        records, marks, holidays: [...holidays]
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `attendance-backup-${todayStr()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      msgEl.textContent = 'Backup downloaded.';
+    });
+
+    importBtn.addEventListener('click', () => importFile.click());
+    importFile.addEventListener('change', () => {
+      const file = importFile.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try{
+          const data = JSON.parse(e.target.result);
+          records = Array.isArray(data.records) ? data.records : [];
+          marks = data.marks && typeof data.marks === 'object' ? data.marks : {};
+          holidays = new Set(Array.isArray(data.holidays) ? data.holidays : []);
+          COURSES.forEach(c => {
+            const existing = marks[c.code];
+            if(Array.isArray(existing)) marks[c.code] = {rows: existing, target: ''};
+            else if(!existing) marks[c.code] = {rows: [], target: ''};
+            else marks[c.code] = {rows: existing.rows || [], target: existing.target || ''};
+          });
+          await saveAtt();
+          await saveMarks();
+          await saveHolidays();
+          renderAttendance();
+          renderMarks();
+          msgEl.textContent = 'Backup imported successfully.';
+        }catch(err){
+          msgEl.textContent = "Couldn't read that file — make sure it's a backup exported from here.";
+        }
+      };
+      reader.readAsText(file);
+      importFile.value = '';
+    });
+  }
+
+  fmtDateHeader();
+  wireBackup();
+  loadAll();
+
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(err => console.error("SW registration failed", err));
+    });
+  }
+})();
+</script>
+</body>
+</html>
