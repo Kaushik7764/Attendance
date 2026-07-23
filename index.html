@@ -806,8 +806,8 @@ const db = initializeFirestore(firebaseApp, {
     return {obt, tot, pct};
   }
 
-  function targetCalc(code){
-    const course = marks[code];
+function targetCalc(code){
+    const course = marks[code] || { rows: [], target: '' };
     const target = parseFloat(course.target);
     if(course.target === '' || isNaN(target)) return {text:'Set a target % to see what you need in the rest.', cls:''};
     const rows = course.rows || [];
