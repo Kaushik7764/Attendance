@@ -543,8 +543,12 @@ const db = initializeFirestore(firebaseApp, {
   });
 
   // Resolve the pending redirect sign-in (iOS Safari path) once the page reloads.
-  getRedirectResult(auth).catch(err => {
-    console.error('Redirect sign-in failed', err);
+getRedirectResult(auth)
+  .then(result => {
+    console.log("Redirect result:", result);
+  })
+  .catch(err => {
+    console.error("Redirect sign-in failed", err);
     authMsg.textContent = "Sign-in failed — please try again.";
     authMsg.classList.add('auth-error');
   });
@@ -1007,13 +1011,17 @@ function targetCalc(code){
 
   // Gate data loading on authentication completing first.
   onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
+  console.log("Auth changed:", user);
+  currentUser = user;
     if(user){
+      console.log("Signed in as", user.uid);
+      authGate.classList.add('hidden');
       authGate.classList.add('hidden');
       userBar.style.display = 'flex';
       userEmailEl.textContent = user.email || user.displayName || 'Signed in';
       startListeners();
     } else {
+      console.log("No signed-in user");
       stopListeners();
       authGate.classList.remove('hidden');
       userBar.style.display = 'none';
