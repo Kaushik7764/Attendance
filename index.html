@@ -249,10 +249,59 @@ footer.note{
 .marks-empty{font-size:10.5px; color:var(--gray); padding:4px 0 8px;}
 
 .footnote{margin-top:16px; font-size:10.5px; color:var(--gray);}
+
+/* ---------- auth ---------- */
+#auth-gate{
+  position:fixed; inset:0; background:var(--paper); z-index:1000;
+  display:flex; align-items:center; justify-content:center; padding:24px;
+}
+#auth-gate.hidden{ display:none; }
+.auth-card{
+  border:2px solid var(--line); background:var(--panel); padding:32px 28px;
+  max-width:360px; width:100%; text-align:center;
+}
+.auth-eyebrow{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--gray); margin:0 0 8px;}
+.auth-title{font-family:'Archivo',sans-serif; font-weight:800; font-size:20px; color:#fff; margin:0 0 18px; letter-spacing:-.01em; text-transform:uppercase;}
+.auth-btn{
+  font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+  padding:11px 16px; border:1px solid var(--line); background:var(--ink); color:#0B0C0E;
+  cursor:pointer; letter-spacing:.03em; text-transform:uppercase; width:100%;
+}
+.auth-btn:hover{background:#fff;}
+.auth-btn:disabled{opacity:.6; cursor:default;}
+.auth-msg{font-size:10.5px; color:var(--gray); margin-top:14px;}
+.auth-msg.auth-error{color:#F87171;}
+
+.user-bar{
+  display:flex; align-items:center; justify-content:flex-end; gap:10px;
+  font-size:10.5px; color:var(--gray); margin-bottom:14px; flex-wrap:wrap;
+}
+.user-bar .user-email{color:var(--ink);}
+.user-bar button{
+  font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600;
+  padding:5px 9px; border:1px solid var(--line); background:none; color:var(--ink);
+  cursor:pointer; letter-spacing:.03em; text-transform:uppercase;
+}
+.user-bar button:hover{background:var(--gray-bg);}
 </style>
 </head>
 <body>
+
+<div id="auth-gate">
+  <div class="auth-card">
+    <p class="auth-eyebrow">Sign in required</p>
+    <h2 class="auth-title">My Time Table</h2>
+    <button class="auth-btn" id="google-signin-btn">Sign in with Google</button>
+    <p class="auth-msg" id="auth-msg">Your attendance, marks and holidays sync to your account.</p>
+  </div>
+</div>
+
 <div class="wrap">
+
+  <div class="user-bar" id="user-bar" style="display:none;">
+    <span class="user-email" id="user-email"></span>
+    <button id="signout-btn">Sign out</button>
+  </div>
 
   <!-- ===================== TIMETABLE ===================== -->
   <div class="masthead">
@@ -400,7 +449,36 @@ footer.note{
 
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult,
+  signOut as fbSignOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  doc, setDoc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAO_17bn3Zvud-A0Nc_x2H_jjmtuCiefds",
+  authDomain: "attendance-8240d.firebaseapp.com",
+  projectId: "attendance-8240d",
+  storageBucket: "attendance-8240d.firebasestorage.app",
+  messagingSenderId: "180487652312",
+  appId: "1:180487652312:web:565289ef090d8e97a2a8ad",
+  measurementId: "G-MZKG2G5E4J"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const googleProvider = new GoogleAuthProvider();
+
+// Cloud Firestore with offline persistence (IndexedDB cache, multi-tab aware)
+const db = initializeFirestore(firebaseApp, {
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+});
+
 (function(){
   const COURSES = [
     {code:"EO-301",  name:"Electronics",    cls:"eo",     color:"#FF7A45"},
@@ -411,9 +489,6 @@ footer.note{
     {code:"PHY-301", name:"",               cls:"phy301", color:"#C084FC"},
   ];
   const THRESHOLD = 0.75;
-  const ATT_KEY = "attendance-records";
-  const MARKS_KEY = "marks-records";
-  const HOLIDAY_KEY = "holiday-dates";
 
   // Which courses actually meet on each weekday, derived from the timetable.
   // 0=Sunday ... 6=Saturday
@@ -431,6 +506,61 @@ footer.note{
   let marks = {};        // marks: { courseCode: { rows: [{id, name, obtained, total}], target: '' } }
   let holidays = new Set(); // date strings marked as holidays
   let loggedAnyway = new Set(); // course codes toggled open today despite not being scheduled
+  let currentUser = null; // Firebase Auth user, set by onAuthStateChanged below
+
+  const authGate = document.getElementById('auth-gate');
+  const authMsg = document.getElementById('auth-msg');
+  const signinBtn = document.getElementById('google-signin-btn');
+  const userBar = document.getElementById('user-bar');
+  const userEmailEl = document.getElementById('user-email');
+
+  function isIosSafari(){
+    const ua = window.navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isSafari = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+    return isIOS && isSafari;
+  }
+
+  signinBtn.addEventListener('click', () => {
+    signinBtn.disabled = true;
+    authMsg.textContent = 'Opening Google sign-in…';
+    authMsg.classList.remove('auth-error');
+    if(isIosSafari()){
+      // Popups are unreliable in iOS Safari (especially in standalone/PWA mode), so redirect instead.
+      signInWithRedirect(auth, googleProvider).catch(err => {
+        console.error('Sign-in failed', err);
+        authMsg.textContent = "Sign-in failed — please try again.";
+        authMsg.classList.add('auth-error');
+        signinBtn.disabled = false;
+      });
+    } else {
+      signInWithPopup(auth, googleProvider).catch(err => {
+        console.error('Sign-in failed', err);
+        authMsg.textContent = "Sign-in failed — please try again.";
+        authMsg.classList.add('auth-error');
+      }).finally(() => { signinBtn.disabled = false; });
+    }
+  });
+
+  // Resolve the pending redirect sign-in (iOS Safari path) once the page reloads.
+  getRedirectResult(auth).catch(err => {
+    console.error('Redirect sign-in failed', err);
+    authMsg.textContent = "Sign-in failed — please try again.";
+    authMsg.classList.add('auth-error');
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', () => {
+    fbSignOut(auth);
+  });
+
+  /* ---------------- Firestore document references ----------------
+     users/{uid}/data/attendance -> { records: [...] }
+     users/{uid}/data/marks      -> { marks: {...} }
+     users/{uid}/data/holidays   -> { holidays: [...] }
+  ------------------------------------------------------------------ */
+  function attDocRef(){ return doc(db, 'users', currentUser.uid, 'data', 'attendance'); }
+  function marksDocRef(){ return doc(db, 'users', currentUser.uid, 'data', 'marks'); }
+  function holidaysDocRef(){ return doc(db, 'users', currentUser.uid, 'data', 'holidays'); }
 
   function todayStr(){ return new Date().toISOString().slice(0,10); }
 
@@ -439,43 +569,58 @@ footer.note{
       new Date().toLocaleDateString(undefined, {weekday:'long', year:'numeric', month:'short', day:'numeric'});
   }
 
-  /* ---------------- storage ---------------- */
-  async function loadAll(){
-    try{
-      const v = localStorage.getItem(ATT_KEY);
-      records = v ? JSON.parse(v) : [];
-    }catch(e){ records = []; }
-    try{
-      const v2 = localStorage.getItem(MARKS_KEY);
-      marks = v2 ? JSON.parse(v2) : {};
-    }catch(e){ marks = {}; }
-    try{
-      const v3 = localStorage.getItem(HOLIDAY_KEY);
-      const list = v3 ? JSON.parse(v3) : [];
+  /* ---------------- storage (Cloud Firestore, real-time) ---------------- */
+  let unsubAtt = null, unsubMarks = null, unsubHolidays = null;
+
+  function startListeners(){
+    stopListeners();
+
+    unsubAtt = onSnapshot(attDocRef(), (snap) => {
+      const data = snap.exists() ? snap.data() : null;
+      records = data && Array.isArray(data.records) ? data.records : [];
+      renderAttendance();
+    }, (err) => console.error('Attendance sync error', err));
+
+    unsubMarks = onSnapshot(marksDocRef(), (snap) => {
+      const data = snap.exists() ? snap.data() : null;
+      marks = data && data.marks && typeof data.marks === 'object' ? data.marks : {};
+      COURSES.forEach(c => {
+        const existing = marks[c.code];
+        if(Array.isArray(existing)) marks[c.code] = {rows: existing, target: ''};
+        else if(!existing) marks[c.code] = {rows: [], target: ''};
+        else marks[c.code] = {rows: existing.rows || [], target: existing.target || ''};
+      });
+      renderMarks();
+    }, (err) => console.error('Marks sync error', err));
+
+    unsubHolidays = onSnapshot(holidaysDocRef(), (snap) => {
+      const data = snap.exists() ? snap.data() : null;
+      const list = data && Array.isArray(data.holidays) ? data.holidays : [];
       holidays = new Set(list);
-    }catch(e){ holidays = new Set(); }
+      renderAttendance();
+    }, (err) => console.error('Holidays sync error', err));
+  }
 
-    COURSES.forEach(c => {
-      const existing = marks[c.code];
-      if(Array.isArray(existing)) marks[c.code] = {rows: existing, target: ''};
-      else if(!existing) marks[c.code] = {rows: [], target: ''};
-      else marks[c.code] = {rows: existing.rows || [], target: existing.target || ''};
-    });
-
-    renderAttendance();
-    renderMarks();
+  function stopListeners(){
+    if(unsubAtt) unsubAtt();
+    if(unsubMarks) unsubMarks();
+    if(unsubHolidays) unsubHolidays();
+    unsubAtt = unsubMarks = unsubHolidays = null;
   }
 
   async function saveAtt(){
-    try{ localStorage.setItem(ATT_KEY, JSON.stringify(records)); }
+    if(!currentUser) return;
+    try{ await setDoc(attDocRef(), {records}); }
     catch(e){ console.error('Storage error', e); }
   }
   async function saveMarks(){
-    try{ localStorage.setItem(MARKS_KEY, JSON.stringify(marks)); }
+    if(!currentUser) return;
+    try{ await setDoc(marksDocRef(), {marks}); }
     catch(e){ console.error('Storage error', e); }
   }
   async function saveHolidays(){
-    try{ localStorage.setItem(HOLIDAY_KEY, JSON.stringify([...holidays])); }
+    if(!currentUser) return;
+    try{ await setDoc(holidaysDocRef(), {holidays:[...holidays]}); }
     catch(e){ console.error('Storage error', e); }
   }
   function toggleHolidayToday(){
@@ -853,13 +998,35 @@ footer.note{
 
   fmtDateHeader();
   wireBackup();
-  loadAll();
 
   if("serviceWorker" in navigator){
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("sw.js").catch(err => console.error("SW registration failed", err));
     });
   }
+
+  // Gate data loading on authentication completing first.
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if(user){
+      authGate.classList.add('hidden');
+      userBar.style.display = 'flex';
+      userEmailEl.textContent = user.email || user.displayName || 'Signed in';
+      startListeners();
+    } else {
+      stopListeners();
+      authGate.classList.remove('hidden');
+      userBar.style.display = 'none';
+      authMsg.textContent = 'Your attendance, marks and holidays sync to your account.';
+      authMsg.classList.remove('auth-error');
+      records = [];
+      marks = {};
+      holidays = new Set();
+      loggedAnyway = new Set();
+      renderAttendance();
+      renderMarks();
+    }
+  });
 })();
 </script>
 </body>
