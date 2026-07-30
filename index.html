@@ -283,6 +283,107 @@ footer.note{
   cursor:pointer; letter-spacing:.03em; text-transform:uppercase;
 }
 .user-bar button:hover{background:var(--gray-bg);}
+
+/* ---------- timetable toolbar ---------- */
+.tt-toolbar{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+.tt-btn{
+  font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600;
+  padding:7px 11px; border:1px solid var(--line); background:none; color:var(--ink);
+  cursor:pointer; letter-spacing:.03em; text-transform:uppercase;
+}
+.tt-btn:hover{background:var(--gray-bg);}
+.tt-btn.on{background:var(--ink); color:#0B0C0E;}
+.tt-btn.primary{border-color:#4ADE80; color:#4ADE80;}
+.tt-btn.primary:hover{background:#4ADE80; color:#0B0C0E;}
+.tt-spacer{flex:1;}
+.tt-hint{font-size:10.5px; color:var(--gray); margin:0 0 14px;}
+
+/* ---------- editable slots ---------- */
+.slot.editable{cursor:pointer; position:relative;}
+.slot.editable:hover{outline:1px dashed var(--gray); outline-offset:-1px;}
+.slot.editable.free:hover{outline-color:var(--ink);}
+.slot.drag-over{outline:2px solid #FBBF24; outline-offset:-2px; background:rgba(251,191,36,.12);}
+.slot.dragging{opacity:.35;}
+.slot.conflict{outline:2px solid #F87171; outline-offset:-2px;}
+.slot .conflict-badge{
+  position:absolute; top:3px; right:3px; font-size:8px; font-weight:700;
+  background:#F87171; color:#0B0C0E; padding:1px 4px; letter-spacing:.04em;
+  font-family:'Archivo',sans-serif;
+}
+.slot[draggable="true"]{cursor:grab;}
+
+/* ---------- modal ---------- */
+.tt-modal-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:900;
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.tt-modal-backdrop.hidden{display:none;}
+.tt-modal{
+  background:var(--panel); border:2px solid var(--line); max-width:420px; width:100%;
+  max-height:88vh; overflow:auto; padding:22px 22px 18px;
+}
+.tt-modal h3{
+  font-family:'Archivo',sans-serif; font-weight:800; font-size:16px; text-transform:uppercase;
+  margin:0 0 16px; color:#fff; letter-spacing:-.01em;
+}
+.tt-field{margin-bottom:12px;}
+.tt-field label{display:block; font-size:10.5px; color:var(--gray); text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px;}
+.tt-field input, .tt-field select{
+  width:100%; font-family:'IBM Plex Mono',monospace; background:var(--gray-bg); border:1px solid var(--line);
+  color:var(--ink); padding:8px 9px; font-size:12px;
+}
+.tt-field-row{display:flex; gap:10px;}
+.tt-field-row .tt-field{flex:1;}
+.tt-checkline{display:flex; align-items:center; gap:8px; font-size:11px; color:var(--ink); margin-bottom:12px;}
+.tt-conflict-warn{
+  font-size:11px; color:#F87171; border:1px solid #F87171; padding:8px 10px; margin-bottom:12px; display:none;
+}
+.tt-conflict-warn.show{display:block;}
+.tt-modal-actions{display:flex; gap:8px; justify-content:flex-end; margin-top:16px; flex-wrap:wrap;}
+.tt-modal-actions .tt-btn.danger{border-color:#F87171; color:#F87171;}
+.tt-modal-actions .tt-btn.danger:hover{background:#F87171; color:#0B0C0E;}
+.tt-modal-close{position:sticky; top:0; float:right; background:none; border:none; color:var(--gray); font-size:18px; cursor:pointer; line-height:1;}
+.tt-modal-close:hover{color:var(--ink);}
+
+/* ---------- course manager ---------- */
+.course-mgr-row{display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--gray-bg); flex-wrap:wrap;}
+.course-mgr-row:last-child{border-bottom:none;}
+.course-mgr-sw{width:16px; height:16px; flex:none; border:1px solid var(--line); padding:0; cursor:pointer;}
+.course-mgr-row input[type="text"], .course-mgr-row input[type="number"]{
+  font-family:'IBM Plex Mono',monospace; background:var(--gray-bg); border:1px solid var(--line);
+  color:var(--ink); padding:6px 7px; font-size:11px;
+}
+.course-mgr-code{width:78px;}
+.course-mgr-name{flex:1; min-width:90px;}
+.course-mgr-instr{width:74px;}
+.course-mgr-credits{width:52px;}
+.course-mgr-del{cursor:pointer; color:var(--gray); background:none; border:none; font-size:15px; font-family:inherit;}
+.course-mgr-del:hover{color:#F87171;}
+
+/* ---------- summary / credits / utilization ---------- */
+.tt-summary-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px; border:2px solid var(--line); margin-bottom:20px;}
+.tt-summary-cell{background:var(--panel); padding:12px 14px;}
+.tt-summary-day{font-family:'Archivo',sans-serif; font-weight:700; font-size:12px; text-transform:uppercase; color:#fff; margin-bottom:6px;}
+.tt-summary-line{font-size:10.5px; color:var(--gray); display:flex; justify-content:space-between; margin-top:2px;}
+.tt-summary-line b{color:var(--ink); font-weight:600;}
+
+.credits-table{width:100%; border-collapse:collapse; border:2px solid var(--line); margin-bottom:8px;}
+.credits-table th{background:#F2F2F2; color:#0B0C0E; font-family:'Archivo',sans-serif; font-size:10.5px; text-transform:uppercase; padding:8px; text-align:left;}
+.credits-table td{border-top:1px solid var(--gray-bg); padding:8px; font-size:11.5px;}
+.credits-table tfoot td{border-top:2px solid var(--line); font-weight:700; color:#fff;}
+
+.util-row{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+.util-label{width:120px; font-size:10.5px; color:var(--gray); flex:none;}
+.util-track{flex:1; height:10px; background:var(--gray-bg); overflow:hidden;}
+.util-fill{height:100%;}
+.util-val{width:44px; text-align:right; font-size:10.5px; color:var(--ink); flex:none;}
+
+@media print{
+  body *{ visibility:hidden; }
+  #timetable-print-area, #timetable-print-area *{ visibility:visible; }
+  #timetable-print-area{ position:absolute; left:0; top:0; width:100%; }
+  .tt-toolbar, .tt-hint{ display:none !important; }
+}
 </style>
 </head>
 <body>
@@ -309,96 +410,109 @@ footer.note{
       <p class="eyebrow">Semester 2026-27-1</p>
       <h1>My Time Table</h1>
     </div>
-    <div class="legend">
-      <span class="chip"><span class="sw" style="background:var(--eo)"></span>EO-301</span>
-      <span class="chip"><span class="sw" style="background:var(--phy302)"></span>PHY-302</span>
-      <span class="chip"><span class="sw" style="background:var(--ep361)"></span>EP-361</span>
-      <span class="chip"><span class="sw" style="background:var(--phy306)"></span>PHY-306</span>
-      <span class="chip"><span class="sw" style="background:var(--ee403)"></span>EE-403</span>
-      <span class="chip"><span class="sw" style="background:var(--phy301)"></span>PHY-301</span>
-      <span class="chip"><span class="sw lab"></span>Digital Lab</span>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="tt-toolbar">
+    <button class="tt-btn" id="edit-toggle-btn">Edit mode: off</button>
+    <button class="tt-btn" id="manage-courses-btn">Manage courses</button>
+    <span class="tt-spacer"></span>
+    <button class="tt-btn" id="export-ics-btn">Export calendar (.ics)</button>
+    <button class="tt-btn" id="export-image-btn">Export image</button>
+    <button class="tt-btn" id="export-pdf-btn">Export PDF</button>
+  </div>
+  <p class="tt-hint" id="tt-hint">Turn on edit mode to click a slot and assign/edit a course, or drag classes between slots.</p>
+
+  <div id="timetable-print-area">
+    <div id="timetable-container"></div>
+
+    <footer class="note">
+      <span>Striped fill = Lab</span>
+      <span>Diagonal hatch = free / unscheduled</span>
+      <span>08:00–17:25, five days</span>
+    </footer>
+  </div>
+
+  <!-- ===================== WEEKLY SUMMARY ===================== -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Auto-recalculated from the timetable above</p>
+        <h2 class="section-h2">Weekly Summary</h2>
+      </div>
+    </div>
+    <div class="tt-summary-grid" id="tt-summary-grid"></div>
+  </div>
+
+  <!-- ===================== CREDITS & HOURS ===================== -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Hours/week derived from scheduled slots</p>
+        <h2 class="section-h2">Credits &amp; Hours</h2>
+      </div>
+    </div>
+    <table class="credits-table" id="credits-table"></table>
+  </div>
+
+  <!-- ===================== ANALYTICS ===================== -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Room/day utilization across the week</p>
+        <h2 class="section-h2">Analytics</h2>
+      </div>
+    </div>
+    <div id="util-block"></div>
+  </div>
+
+  <!-- ===================== SLOT EDITOR MODAL ===================== -->
+  <div class="tt-modal-backdrop hidden" id="slot-modal-backdrop">
+    <div class="tt-modal">
+      <button class="tt-modal-close" id="slot-modal-close">&times;</button>
+      <h3 id="slot-modal-title">Edit slot</h3>
+      <div class="tt-field">
+        <label>Day / time</label>
+        <div class="tt-field-row">
+          <select id="slot-day"></select>
+          <select id="slot-row"></select>
+        </div>
+      </div>
+      <div class="tt-field">
+        <label>Duration (rows)</label>
+        <select id="slot-span"></select>
+      </div>
+      <div class="tt-field">
+        <label>Course</label>
+        <select id="slot-course"><option value="">— Free / clear slot —</option></select>
+      </div>
+      <div class="tt-field-row">
+        <div class="tt-field"><label>Section/Instructor tag</label><input type="text" id="slot-section" placeholder="e.g. A"></div>
+        <div class="tt-field"><label>Room</label><input type="text" id="slot-room" placeholder="e.g. G-14"></div>
+      </div>
+      <div class="tt-field"><label>Kind / note (optional)</label><input type="text" id="slot-kind" placeholder="e.g. Electronics"></div>
+      <div class="tt-checkline"><input type="checkbox" id="slot-lab"><label for="slot-lab">This is a lab session</label></div>
+      <div class="tt-conflict-warn" id="slot-conflict-warn"></div>
+      <div class="tt-modal-actions">
+        <button class="tt-btn danger" id="slot-clear-btn">Clear slot</button>
+        <button class="tt-btn" id="slot-cancel-btn">Cancel</button>
+        <button class="tt-btn primary" id="slot-save-btn">Save</button>
+      </div>
     </div>
   </div>
 
-  <table>
-    <colgroup><col class="timecol"><col><col><col><col><col></colgroup>
-    <thead><tr><th>Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
-    <tbody>
-      <tr>
-        <td class="timecell"><div class="t">08:00–08:55</div></td>
-        <td class="cell" rowspan="2"><div class="slot eo"><div class="top"><span class="sw"></span><span class="code">EO-301 (F)</span></div><div class="room">G-14</div><div class="kind">Electronics</div></div></td>
-        <td class="cell"><div class="slot phy302"><div class="top"><span class="sw"></span><span class="code">PHY-302 (A)</span></div><div class="room">LT3.4B</div></div></td>
-        <td class="cell"><div class="slot phy302"><div class="top"><span class="sw"></span><span class="code">PHY-302 (A)</span></div><div class="room">LT3.4B</div></div></td>
-        <td class="cell"><div class="slot eo"><div class="top"><span class="sw"></span><span class="code">EO-301 (F)</span></div><div class="room">G-14</div><div class="kind">Electronics</div></div></td>
-        <td class="cell"><div class="slot phy302"><div class="top"><span class="sw"></span><span class="code">PHY-302 (A)</span></div><div class="room">LT3.4B</div></div></td>
-      </tr>
-      <tr>
-        <td class="timecell"><div class="t">09:00–09:55</div></td>
-        <td class="cell"><div class="slot ep361"><div class="top"><span class="sw"></span><span class="code">EP-361 (B)</span></div><div class="room">T3 · D&amp;V</div></div></td>
-        <td class="cell"><div class="slot ep361"><div class="top"><span class="sw"></span><span class="code">EP-361 (B)</span></div><div class="room">T3 · D&amp;V</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot ep361"><div class="top"><span class="sw"></span><span class="code">EP-361 (B)</span></div><div class="room">T3 · D&amp;V</div></div></td>
-      </tr>
-      <tr>
-        <td class="timecell"><div class="t">10:00–10:55</div></td>
-        <td class="cell" rowspan="2"><div class="slot ee403"><div class="top"><span class="sw"></span><span class="code">EE-403 (G)</span></div><div class="room">G-10</div><div class="kind">Electrical Eng.</div></div></td>
-        <td class="cell"><div class="slot phy306"><div class="top"><span class="sw"></span><span class="code">PHY-306 (C)</span></div><div class="room">T1 · D&amp;V</div></div></td>
-        <td class="cell"><div class="slot phy306"><div class="top"><span class="sw"></span><span class="code">PHY-306 (C)</span></div><div class="room">T1 · D&amp;V</div></div></td>
-        <td class="cell" rowspan="2"><div class="slot ee403"><div class="top"><span class="sw"></span><span class="code">EE-403 (G)</span></div><div class="room">G-10</div><div class="kind">Electrical Eng.</div></div></td>
-        <td class="cell"><div class="slot phy306"><div class="top"><span class="sw"></span><span class="code">PHY-306 (C)</span></div><div class="room">T1 · D&amp;V</div></div></td>
-      </tr>
-      <tr>
-        <td class="timecell"><div class="t">11:00–11:25</div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-      </tr>
-      <tr>
-        <td class="timecell brk"><div class="t">11:25–13:30</div></td>
-        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
-        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
-        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
-        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
-        <td class="cell brk"><div class="slot free"><div class="code">Lunch break</div></div></td>
-      </tr>
-      <tr>
-        <td class="timecell"><div class="t">13:30–14:25</div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell" rowspan="2"><div class="slot lab"><div class="badge">LAB</div><div class="code" style="color:var(--eo)">EO-301 (Lab-7)</div><div class="room">Digital Lab</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-      </tr>
-      <tr>
-        <td class="timecell"><div class="t">14:30–15:25</div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot phy301"><div class="top"><span class="sw"></span><span class="code">PHY-301 (J)</span></div><div class="room">LT3.2B</div></div></td>
-        <td class="cell"><div class="slot phy301"><div class="top"><span class="sw"></span><span class="code">PHY-301 (J)</span></div><div class="room">LT3.2B</div></div></td>
-        <td class="cell"><div class="slot phy301"><div class="top"><span class="sw"></span><span class="code">PHY-301 (J)</span></div><div class="room">LT3.2B</div></div></td>
-      </tr>
-      <tr>
-        <td class="timecell"><div class="t">15:30–16:25</div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell" rowspan="2"><div class="slot lab"><div class="badge">LAB</div><div class="code" style="color:var(--eo)">EO-301 (Lab-10)</div><div class="room">Digital Lab</div></div></td>
-      </tr>
-      <tr>
-        <td class="timecell"><div class="t">16:30–17:25</div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-        <td class="cell"><div class="slot free"><div class="code">Free</div></div></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <footer class="note">
-    <span>Striped fill = Digital Lab</span>
-    <span>Diagonal hatch = free / unscheduled</span>
-    <span>08:00–17:25, five days</span>
-  </footer>
+  <!-- ===================== COURSE MANAGER MODAL ===================== -->
+  <div class="tt-modal-backdrop hidden" id="course-modal-backdrop">
+    <div class="tt-modal">
+      <button class="tt-modal-close" id="course-modal-close">&times;</button>
+      <h3>Manage courses</h3>
+      <div id="course-mgr-list"></div>
+      <div class="tt-modal-actions">
+        <button class="tt-btn" id="course-add-btn">+ Add course</button>
+        <button class="tt-btn primary" id="course-done-btn">Done</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ===================== ATTENDANCE ===================== -->
   <div class="section">
@@ -480,27 +594,168 @@ const db = initializeFirestore(firebaseApp, {
 });
 
 (function(){
-  const COURSES = [
-    {code:"EO-301",  name:"Electronics",    cls:"eo",     color:"#FF7A45"},
-    {code:"PHY-302", name:"",               cls:"phy302", color:"#5C9DFF"},
-    {code:"EP-361",  name:"D&V",            cls:"ep361",  color:"#2DD4BF"},
-    {code:"PHY-306", name:"D&V",            cls:"phy306", color:"#F472B6"},
-    {code:"EE-403",  name:"Electrical Eng.",cls:"ee403",  color:"#4ADE80"},
-    {code:"PHY-301", name:"",               cls:"phy301", color:"#C084FC"},
+  /* ---------------- timetable data model ----------------
+     COURSES: mutable list of course definitions (color/instructor/credits editable)
+     ROWS: fixed time rows (including the lunch break row)
+     entries: the manually-edited timetable — the single source of truth for
+     everything else (attendance schedule, summaries, credits/hours, analytics, exports)
+  ------------------------------------------------------------------ */
+  const DEFAULT_COURSES = [
+    {code:"EO-301",  name:"Electronics",    color:"#FF7A45", instructor:"F", credits:""},
+    {code:"PHY-302", name:"",               color:"#5C9DFF", instructor:"A", credits:""},
+    {code:"EP-361",  name:"D&V",            color:"#2DD4BF", instructor:"B", credits:""},
+    {code:"PHY-306", name:"D&V",            color:"#F472B6", instructor:"C", credits:""},
+    {code:"EE-403",  name:"Electrical Eng.",color:"#4ADE80", instructor:"G", credits:""},
+    {code:"PHY-301", name:"",               color:"#C084FC", instructor:"J", credits:""},
   ];
+  // Live, mutable copy — the module-level defaults above stay untouched so we always
+  // have a real baseline to recover to if a loaded/imported timetable turns out empty.
+  let COURSES = DEFAULT_COURSES.map(c => ({...c}));
   const THRESHOLD = 0.75;
+  const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  // JS Date.getDay() index for each DAYS entry (Mon=1 ... Fri=5)
+  const DAY_JS_IDX = [1,2,3,4,5];
 
-  // Which courses actually meet on each weekday, derived from the timetable.
+  // Fixed time rows. `brk` rows are the lunch break and can't hold entries.
+  const ROWS = [
+    {id:"r0", start:"08:00", end:"08:55", brk:false},
+    {id:"r1", start:"09:00", end:"09:55", brk:false},
+    {id:"r2", start:"10:00", end:"10:55", brk:false},
+    {id:"r3", start:"11:00", end:"11:25", brk:false},
+    {id:"r4", start:"11:25", end:"13:30", brk:true, label:"Lunch break"},
+    {id:"r5", start:"13:30", end:"14:25", brk:false},
+    {id:"r6", start:"14:30", end:"15:25", brk:false},
+    {id:"r7", start:"15:30", end:"16:25", brk:false},
+    {id:"r8", start:"16:30", end:"17:25", brk:false},
+  ];
+  function rowLabel(r){ return r.label || `${r.start}–${r.end}`; }
+  function rowMinutes(r){
+    const [sh,sm] = r.start.split(':').map(Number), [eh,em] = r.end.split(':').map(Number);
+    return (eh*60+em) - (sh*60+sm);
+  }
+
+  // entries: {id, day (0-4, index into DAYS), row (starting row index, class rows only), span, code, section, room, kind, lab}
+  const DEFAULT_ENTRIES = [
+    {id:"e1",  day:0, row:0, span:2, code:"EO-301",  section:"F", room:"G-14",   kind:"Electronics",     lab:false},
+    {id:"e2",  day:1, row:0, span:1, code:"PHY-302", section:"A", room:"LT3.4B", kind:"",                lab:false},
+    {id:"e3",  day:2, row:0, span:1, code:"PHY-302", section:"A", room:"LT3.4B", kind:"",                lab:false},
+    {id:"e4",  day:3, row:0, span:1, code:"EO-301",  section:"F", room:"G-14",   kind:"Electronics",     lab:false},
+    {id:"e5",  day:4, row:0, span:1, code:"PHY-302", section:"A", room:"LT3.4B", kind:"",                lab:false},
+    {id:"e6",  day:1, row:1, span:1, code:"EP-361",  section:"B", room:"T3 · D&V", kind:"",              lab:false},
+    {id:"e7",  day:2, row:1, span:1, code:"EP-361",  section:"B", room:"T3 · D&V", kind:"",              lab:false},
+    {id:"e8",  day:4, row:1, span:1, code:"EP-361",  section:"B", room:"T3 · D&V", kind:"",              lab:false},
+    {id:"e9",  day:0, row:2, span:2, code:"EE-403",  section:"G", room:"G-10",   kind:"Electrical Eng.", lab:false},
+    {id:"e10", day:1, row:2, span:1, code:"PHY-306", section:"C", room:"T1 · D&V", kind:"",              lab:false},
+    {id:"e11", day:2, row:2, span:1, code:"PHY-306", section:"C", room:"T1 · D&V", kind:"",              lab:false},
+    {id:"e12", day:3, row:2, span:2, code:"EE-403",  section:"G", room:"G-10",   kind:"Electrical Eng.", lab:false},
+    {id:"e13", day:4, row:2, span:1, code:"PHY-306", section:"C", room:"T1 · D&V", kind:"",              lab:false},
+    {id:"e14", day:3, row:5, span:2, code:"EO-301",  section:"Lab-7",  room:"Digital Lab", kind:"", lab:true},
+    {id:"e15", day:1, row:6, span:1, code:"PHY-301", section:"J", room:"LT3.2B", kind:"",              lab:false},
+    {id:"e16", day:2, row:6, span:1, code:"PHY-301", section:"J", room:"LT3.2B", kind:"",              lab:false},
+    {id:"e17", day:4, row:6, span:1, code:"PHY-301", section:"J", room:"LT3.2B", kind:"",              lab:false},
+    {id:"e18", day:4, row:7, span:2, code:"EO-301",  section:"Lab-10", room:"Digital Lab", kind:"", lab:true},
+  ];
+  let entries = DEFAULT_ENTRIES.map(e => ({...e}));
+  let editMode = false;
+  let nextEntryId = 19;
+
+  function courseByCode(code){ return COURSES.find(c => c.code === code); }
+  function classRowIndexes(){ return ROWS.map((r,i)=>i).filter(i => !ROWS[i].brk); }
+
+  /* ---------------- timetable data integrity ----------------
+     Now that `entries`/`COURSES` are loaded from Firestore (and from imported
+     backups) rather than always being the hardcoded defaults, they can no
+     longer be assumed well-formed just because the code compiled. This is the
+     single choke-point every external timetable payload passes through before
+     it's trusted as the "single source of truth" — it repairs/drops anything
+     that doesn't fit the current ROWS layout instead of letting a bad row
+     index take down every render function that touches it (rowMinutes,
+     entryAt, renderSummary, etc. all index straight into ROWS with e.row).
+     Returns {courses, entries, nextEntryId} and never throws.
+  ------------------------------------------------------------------ */
+  function normalizeTimetableData(rawCourses, rawEntries, rawNextEntryId){
+    const droppedCourses = [], droppedEntries = [];
+
+    const courses = (Array.isArray(rawCourses) ? rawCourses : []).filter(c => {
+      const ok = c && typeof c === 'object' && typeof c.code === 'string' && c.code.trim() !== '';
+      if(!ok) droppedCourses.push(c);
+      return ok;
+    }).map(c => ({
+      code: c.code,
+      name: typeof c.name === 'string' ? c.name : '',
+      color: typeof c.color === 'string' && c.color ? c.color : '#9A9DA3',
+      instructor: typeof c.instructor === 'string' ? c.instructor : '',
+      credits: c.credits == null ? '' : c.credits,
+    }));
+    // de-dupe by code, keeping the first occurrence
+    const seenCodes = new Set();
+    const dedupedCourses = courses.filter(c => {
+      if(seenCodes.has(c.code)) { droppedCourses.push(c); return false; }
+      seenCodes.add(c.code);
+      return true;
+    });
+
+    const classRows = ROWS.map((r,i)=>i).filter(i => !ROWS[i].brk);
+    const validCodes = new Set(dedupedCourses.map(c => c.code));
+
+    const entries = (Array.isArray(rawEntries) ? rawEntries : []).filter(e => {
+      const dayOk = e && Number.isInteger(e.day) && e.day >= 0 && e.day < DAYS.length;
+      const rowOk = e && Number.isInteger(e.row) && classRows.includes(e.row);
+      const spanOk = e && Number.isInteger(e.span) && e.span >= 1 &&
+        classRows.includes(e.row + e.span - 1) &&
+        // a span can't cross the lunch break — every row it covers must be in the same
+        // contiguous class segment as its start row
+        classRows.slice(classRows.indexOf(e.row), classRows.indexOf(e.row) + e.span)
+          .every((r, idx) => r === e.row + idx);
+      const codeOk = e && typeof e.code === 'string' && validCodes.has(e.code);
+      const ok = dayOk && rowOk && spanOk && codeOk;
+      if(!ok) droppedEntries.push(e);
+      return ok;
+    }).map(e => ({
+      id: typeof e.id === 'string' && e.id ? e.id : ('e' + Math.random().toString(36).slice(2)),
+      day: e.day, row: e.row, span: e.span, code: e.code,
+      section: typeof e.section === 'string' ? e.section : '',
+      room: typeof e.room === 'string' ? e.room : '',
+      kind: typeof e.kind === 'string' ? e.kind : '',
+      lab: !!e.lab,
+    }));
+
+    if(droppedCourses.length || droppedEntries.length){
+      console.warn(
+        `[timetable] Dropped ${droppedCourses.length} invalid course(s) and ${droppedEntries.length} invalid/out-of-range entr${droppedEntries.length===1?'y':'ies'} while loading saved timetable data.`,
+        {droppedCourses, droppedEntries}
+      );
+    }
+
+    const numericIds = entries.map(e => parseInt(String(e.id).replace(/\D/g,''),10)).filter(n => !isNaN(n));
+    const nextEntryId = Number.isInteger(rawNextEntryId) && rawNextEntryId > 0
+      ? rawNextEntryId
+      : (numericIds.length ? Math.max(...numericIds) + 1 : 1);
+
+    return {courses: dedupedCourses, entries, nextEntryId};
+  }
+
+  // Which courses actually meet on each weekday, derived live from `entries`.
   // 0=Sunday ... 6=Saturday
-  const SCHEDULE = {
-    0: [],
-    1: ["EO-301", "EE-403"],
-    2: ["PHY-302", "EP-361", "PHY-306", "PHY-301"],
-    3: ["PHY-302", "EP-361", "PHY-306", "PHY-301"],
-    4: ["EO-301", "EE-403"],
-    5: ["PHY-302", "EP-361", "PHY-306", "PHY-301", "EO-301"],
-    6: [],
-  };
+  function computeSchedule(){
+    const sched = {0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+    DAYS.forEach((_, dayIdx) => {
+      const jsIdx = DAY_JS_IDX[dayIdx];
+      const codes = new Set();
+      entries.filter(e => e.day === dayIdx).forEach(e => codes.add(e.code));
+      sched[jsIdx] = [...codes];
+    });
+    return sched;
+  }
+
+  function entriesOverlap(a, b){
+    if(a.day !== b.day) return false;
+    const aEnd = a.row + a.span - 1, bEnd = b.row + b.span - 1;
+    return a.row <= bEnd && b.row <= aEnd;
+  }
+  function findConflicts(entry, excludeId){
+    return entries.filter(e => e.id !== excludeId && e.id !== entry.id && entriesOverlap(e, entry));
+  }
 
   let records = [];     // attendance: {id, date, code, status}
   let marks = {};        // marks: { courseCode: { rows: [{id, name, obtained, total}], target: '' } }
@@ -565,6 +820,7 @@ getRedirectResult(auth)
   function attDocRef(){ return doc(db, 'users', currentUser.uid, 'data', 'attendance'); }
   function marksDocRef(){ return doc(db, 'users', currentUser.uid, 'data', 'marks'); }
   function holidaysDocRef(){ return doc(db, 'users', currentUser.uid, 'data', 'holidays'); }
+  function timetableDocRef(){ return doc(db, 'users', currentUser.uid, 'data', 'timetable'); }
 
   function todayStr(){ return new Date().toISOString().slice(0,10); }
 
@@ -574,10 +830,36 @@ getRedirectResult(auth)
   }
 
   /* ---------------- storage (Cloud Firestore, real-time) ---------------- */
-  let unsubAtt = null, unsubMarks = null, unsubHolidays = null;
+  let unsubAtt = null, unsubMarks = null, unsubHolidays = null, unsubTimetable = null;
+  let timetableLoaded = false;
 
   function startListeners(){
     stopListeners();
+
+    unsubTimetable = onSnapshot(timetableDocRef(), (snap) => {
+      const data = snap.exists() ? snap.data() : null;
+      if(data && Array.isArray(data.entries) && Array.isArray(data.courses)){
+        const normalized = normalizeTimetableData(data.courses, data.entries, data.nextEntryId);
+        entries = normalized.entries;
+        COURSES = normalized.courses;
+        nextEntryId = normalized.nextEntryId;
+        // If everything we loaded turned out invalid (or the saved doc was itself
+        // empty), don't leave the account permanently stuck with zero courses —
+        // treat it the same as "no timetable saved yet" and re-baseline it with the
+        // real built-in defaults (not the empty result we just computed).
+        if(COURSES.length === 0 && timetableLoaded === false){
+          COURSES = DEFAULT_COURSES.map(c => ({...c}));
+          entries = DEFAULT_ENTRIES.map(e => ({...e}));
+          nextEntryId = 19;
+          saveTimetable();
+        }
+      } else if(timetableLoaded === false){
+        // No saved timetable yet for this account — push the built-in default up as the baseline.
+        saveTimetable();
+      }
+      timetableLoaded = true;
+      renderAll();
+    }, (err) => console.error('Timetable sync error', err));
 
     unsubAtt = onSnapshot(attDocRef(), (snap) => {
       const data = snap.exists() ? snap.data() : null;
@@ -609,7 +891,15 @@ getRedirectResult(auth)
     if(unsubAtt) unsubAtt();
     if(unsubMarks) unsubMarks();
     if(unsubHolidays) unsubHolidays();
-    unsubAtt = unsubMarks = unsubHolidays = null;
+    if(unsubTimetable) unsubTimetable();
+    unsubAtt = unsubMarks = unsubHolidays = unsubTimetable = null;
+    timetableLoaded = false;
+  }
+
+  async function saveTimetable(){
+    if(!currentUser) return;
+    try{ await setDoc(timetableDocRef(), {entries, courses: COURSES, nextEntryId}); }
+    catch(e){ console.error('Storage error', e); }
   }
 
   async function saveAtt(){
@@ -679,7 +969,7 @@ getRedirectResult(auth)
     const date = todayStr();
     const dayIdx = new Date().getDay();
     const isHoliday = holidays.has(date);
-    const scheduledToday = new Set(isHoliday ? [] : (SCHEDULE[dayIdx] || []));
+    const scheduledToday = new Set(isHoliday ? [] : (computeSchedule()[dayIdx] || []));
 
     // ---- summary banner ----
     let sumPresent = 0, sumTotal = 0;
@@ -795,6 +1085,489 @@ getRedirectResult(auth)
         btn.addEventListener('click', () => removeRecord(btn.dataset.id));
       });
     }
+  }
+
+  /* ---------------- shared helpers ---------------- */
+  function escapeHtml(s){
+    return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function fmtMins(m){
+    m = Math.round(m);
+    if(m<=0) return '0m';
+    const h = Math.floor(m/60), mm = m%60;
+    return (h?`${h}h `:'') + (mm?`${mm}m`:(h?'':'0m'));
+  }
+
+  /* ---------------- timetable rendering ---------------- */
+  function renderLegend(){
+    const el = document.getElementById('legend');
+    el.innerHTML = COURSES.map(c => `<span class="chip"><span class="sw" style="background:${c.color}"></span>${escapeHtml(c.code)}</span>`).join('')
+      + '<span class="chip"><span class="sw lab"></span>Lab</span>';
+  }
+
+  function entryAt(day, row){
+    return entries.filter(e => e.day===day && e.row<=row && row < e.row+e.span)
+      .sort((a,b) => a.row-b.row || String(a.id).localeCompare(String(b.id)));
+  }
+
+  function renderTimetable(){
+    const container = document.getElementById('timetable-container');
+    const skip = [0,0,0,0,0];
+    let html = `<table><colgroup><col class="timecol">${DAYS.map(()=>'<col>').join('')}</colgroup>`;
+    html += `<thead><tr><th>Time</th>${DAYS.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>`;
+    ROWS.forEach((r, ri) => {
+      html += '<tr>';
+      html += `<td class="timecell${r.brk?' brk':''}"><div class="t">${rowLabel(r)}</div></td>`;
+      if(r.brk){
+        DAYS.forEach(() => { html += `<td class="cell brk"><div class="slot free"><div class="code">${escapeHtml(r.label)}</div></div></td>`; });
+      } else {
+        DAYS.forEach((_, di) => {
+          if(skip[di] > 0){ skip[di]--; return; }
+          const covering = entryAt(di, ri);
+          if(covering.length === 0){
+            html += `<td class="cell"><div class="slot free editable" data-day="${di}" data-row="${ri}"><div class="code">Free</div></div></td>`;
+          } else {
+            const entry = covering[0];
+            const course = courseByCode(entry.code);
+            const conflict = covering.length > 1;
+            const startsHere = entry.row === ri;
+            if(startsHere && entry.span > 1) skip[di] = entry.span - 1;
+            const color = course ? course.color : '#9A9DA3';
+            html += `<td class="cell"${startsHere && entry.span>1 ? ` rowspan="${entry.span}"`:''}>` +
+              `<div class="slot editable${entry.lab?' lab':''}${conflict?' conflict':''}" draggable="${editMode}" data-entry="${entry.id}" data-day="${di}" data-row="${entry.row}">` +
+              (entry.lab ? `<div class="badge">LAB</div><div class="code" style="color:${color}">${escapeHtml(entry.code)}${entry.section?` (${escapeHtml(entry.section)})`:''}</div>` :
+                `<div class="top"><span class="sw" style="background:${color}"></span><span class="code" style="color:${color}">${escapeHtml(entry.code)}${entry.section?` (${escapeHtml(entry.section)})`:''}</span></div>`) +
+              (entry.room ? `<div class="room">${escapeHtml(entry.room)}</div>` : '') +
+              (entry.kind ? `<div class="kind">${escapeHtml(entry.kind)}</div>` : '') +
+              (conflict ? `<div class="conflict-badge" title="Overlaps with another class">CONFLICT</div>` : '') +
+              `</div></td>`;
+          }
+        });
+      }
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    wireTimetableCellEvents();
+  }
+
+  function wireTimetableCellEvents(){
+    const container = document.getElementById('timetable-container');
+    container.querySelectorAll('.slot.editable').forEach(el => {
+      el.addEventListener('click', () => {
+        if(!editMode) return;
+        openSlotEditor(parseInt(el.dataset.day), parseInt(el.dataset.row));
+      });
+      el.addEventListener('dragstart', (ev) => {
+        if(!editMode || !el.dataset.entry){ ev.preventDefault(); return; }
+        ev.dataTransfer.setData('text/plain', el.dataset.entry);
+        el.classList.add('dragging');
+      });
+      el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    });
+    container.querySelectorAll('td.cell:not(.brk)').forEach(td => {
+      td.addEventListener('dragover', (ev) => {
+        if(!editMode) return;
+        ev.preventDefault();
+        const s = td.querySelector('.slot'); if(s) s.classList.add('drag-over');
+      });
+      td.addEventListener('dragleave', () => {
+        const s = td.querySelector('.slot'); if(s) s.classList.remove('drag-over');
+      });
+      td.addEventListener('drop', (ev) => {
+        if(!editMode) return;
+        ev.preventDefault();
+        const slotEl = td.querySelector('.slot');
+        if(slotEl) slotEl.classList.remove('drag-over');
+        const entryId = ev.dataTransfer.getData('text/plain');
+        if(!entryId || !slotEl) return;
+        handleDrop(entryId, parseInt(slotEl.dataset.day), parseInt(slotEl.dataset.row));
+      });
+    });
+  }
+
+  function handleDrop(entryId, day, row){
+    const entry = entries.find(e => e.id === entryId);
+    if(!entry) return;
+    if(entry.day === day && entry.row === row) return;
+    const sameHalf = i => (row < 4 ? i < 4 : i >= 5);
+    const segment = classRowIndexes().filter(sameHalf);
+    const maxSpan = segment.filter(i => i >= row).length;
+    if(maxSpan < 1){ alert("Can't drop a class there — it would run into the lunch break."); return; }
+    const span = Math.min(entry.span, maxSpan);
+    const candidate = {...entry, day, row, span};
+    const conflicts = findConflicts(candidate, entry.id);
+    if(conflicts.length){
+      const names = conflicts.map(c => `${c.code} on ${DAYS[c.day]} ${rowLabel(ROWS[c.row])}`).join(', ');
+      if(!confirm(`This overlaps with ${names}. Move anyway?`)) return;
+    }
+    Object.assign(entry, {day, row, span});
+    saveTimetable();
+    renderAll();
+  }
+
+  /* ---------------- slot editor modal ---------------- */
+  let editingEntryId = null;
+  function classSegmentFor(row){
+    return classRowIndexes().filter(i => (row < 4 ? i < 4 : i >= 5));
+  }
+  function currentFormCandidate(){
+    return {
+      id: editingEntryId || 'pending',
+      day: parseInt(document.getElementById('slot-day').value),
+      row: parseInt(document.getElementById('slot-row').value),
+      span: parseInt(document.getElementById('slot-span').value),
+      code: document.getElementById('slot-course').value,
+    };
+  }
+  function updateSpanOptions(){
+    const spanSel = document.getElementById('slot-span');
+    const startRow = parseInt(document.getElementById('slot-row').value);
+    const segment = classSegmentFor(startRow);
+    const maxSpan = segment.filter(i => i >= startRow).length;
+    const prev = spanSel.value;
+    spanSel.innerHTML = '';
+    for(let s=1; s<=maxSpan; s++){
+      const mins = segment.filter(i=>i>=startRow).slice(0,s).reduce((sum,i)=>sum+rowMinutes(ROWS[i]),0);
+      spanSel.innerHTML += `<option value="${s}">${s} row${s>1?'s':''} (~${fmtMins(mins)})</option>`;
+    }
+    spanSel.value = (prev && parseInt(prev) <= maxSpan) ? prev : '1';
+  }
+  function updateConflictPreview(){
+    const warnEl = document.getElementById('slot-conflict-warn');
+    const cand = currentFormCandidate();
+    if(!cand.code){ warnEl.classList.remove('show'); return; }
+    const conflicts = findConflicts(cand, editingEntryId);
+    if(conflicts.length){
+      warnEl.textContent = `This overlaps with ${conflicts.map(c=>`${c.code} (${DAYS[c.day]}, ${rowLabel(ROWS[c.row])})`).join(', ')}. You can still save — it'll be flagged on the timetable.`;
+      warnEl.classList.add('show');
+    } else warnEl.classList.remove('show');
+  }
+  function openSlotEditor(day, row){
+    const covering = entryAt(day, row);
+    const entry = covering[0] || null;
+    editingEntryId = entry ? entry.id : null;
+
+    const daySel = document.getElementById('slot-day');
+    daySel.innerHTML = DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('');
+    daySel.value = String(day);
+
+    const rowSel = document.getElementById('slot-row');
+    rowSel.innerHTML = classRowIndexes().map(i => `<option value="${i}">${rowLabel(ROWS[i])}</option>`).join('');
+    rowSel.value = String(entry ? entry.row : row);
+
+    updateSpanOptions();
+    if(entry) document.getElementById('slot-span').value = String(entry.span);
+
+    const courseSel = document.getElementById('slot-course');
+    courseSel.innerHTML = '<option value="">— Free / clear slot —</option>' +
+      COURSES.map(c => `<option value="${escapeHtml(c.code)}">${escapeHtml(c.code)}${c.name?' · '+escapeHtml(c.name):''}</option>`).join('');
+    courseSel.value = entry ? entry.code : '';
+
+    document.getElementById('slot-section').value = entry ? (entry.section||'') : '';
+    document.getElementById('slot-room').value = entry ? (entry.room||'') : '';
+    document.getElementById('slot-kind').value = entry ? (entry.kind||'') : '';
+    document.getElementById('slot-lab').checked = entry ? !!entry.lab : false;
+
+    document.getElementById('slot-modal-title').textContent = entry ? `Edit ${entry.code}` : 'Assign a course';
+    document.getElementById('slot-clear-btn').style.display = entry ? 'inline-block' : 'none';
+
+    rowSel.onchange = () => { updateSpanOptions(); updateConflictPreview(); };
+    daySel.onchange = updateConflictPreview;
+    document.getElementById('slot-span').onchange = updateConflictPreview;
+    courseSel.onchange = updateConflictPreview;
+    updateConflictPreview();
+
+    document.getElementById('slot-modal-backdrop').classList.remove('hidden');
+  }
+  function closeSlotModal(){
+    document.getElementById('slot-modal-backdrop').classList.add('hidden');
+    editingEntryId = null;
+  }
+  function saveSlotFromModal(){
+    const code = document.getElementById('slot-course').value;
+    if(!code){
+      if(editingEntryId) entries = entries.filter(e => e.id !== editingEntryId);
+      saveTimetable(); renderAll(); closeSlotModal();
+      return;
+    }
+    const data = {
+      day: parseInt(document.getElementById('slot-day').value),
+      row: parseInt(document.getElementById('slot-row').value),
+      span: parseInt(document.getElementById('slot-span').value),
+      code,
+      section: document.getElementById('slot-section').value.trim(),
+      room: document.getElementById('slot-room').value.trim(),
+      kind: document.getElementById('slot-kind').value.trim(),
+      lab: document.getElementById('slot-lab').checked,
+    };
+    if(editingEntryId){
+      const e = entries.find(x => x.id === editingEntryId);
+      if(e) Object.assign(e, data);
+    } else {
+      entries.push({id: 'e'+(nextEntryId++), ...data});
+    }
+    saveTimetable();
+    renderAll();
+    closeSlotModal();
+  }
+
+  /* ---------------- course manager ---------------- */
+  function renderCourseManager(){
+    const list = document.getElementById('course-mgr-list');
+    list.innerHTML = '';
+    COURSES.forEach((c, idx) => {
+      const row = document.createElement('div');
+      row.className = 'course-mgr-row';
+      row.innerHTML = `
+        <input type="color" class="course-mgr-sw" value="${c.color}" data-field="color" title="Color">
+        <input type="text" class="course-mgr-code" value="${escapeHtml(c.code)}" data-field="code" placeholder="CODE">
+        <input type="text" class="course-mgr-name" value="${escapeHtml(c.name)}" data-field="name" placeholder="Name">
+        <input type="text" class="course-mgr-instr" value="${escapeHtml(c.instructor||'')}" data-field="instructor" placeholder="Instr.">
+        <input type="number" class="course-mgr-credits" value="${escapeHtml(c.credits)}" data-field="credits" placeholder="Cr.">
+        <button class="course-mgr-del" title="Delete course">×</button>
+      `;
+      row.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('change', () => {
+          const field = inp.dataset.field;
+          if(field === 'code'){
+            const val = inp.value.trim().toUpperCase();
+            if(!val){ inp.value = c.code; return; }
+            const oldCode = c.code;
+            if(val !== oldCode){
+              if(COURSES.some(x => x !== c && x.code === val)){ alert('Another course already uses that code.'); inp.value = oldCode; return; }
+              entries.forEach(e => { if(e.code === oldCode) e.code = val; });
+              records.forEach(r => { if(r.code === oldCode) r.code = val; });
+              if(marks[oldCode]){ marks[val] = marks[oldCode]; delete marks[oldCode]; }
+              c.code = val;
+              saveAtt(); saveMarks();
+            }
+          } else {
+            c[field] = inp.value;
+          }
+          saveTimetable();
+          renderAll();
+          renderCourseManager();
+        });
+      });
+      row.querySelector('.course-mgr-del').addEventListener('click', () => {
+        const count = entries.filter(e => e.code === c.code).length;
+        if(!confirm(`Delete ${c.code}? This removes ${count} timetable slot(s) too. Attendance/marks history is kept.`)) return;
+        entries = entries.filter(e => e.code !== c.code);
+        COURSES.splice(idx, 1);
+        saveTimetable();
+        renderAll();
+        renderCourseManager();
+      });
+      list.appendChild(row);
+    });
+  }
+
+  /* ---------------- weekly summary / credits / utilization (all derived from `entries`) ---------------- */
+  function renderSummary(){
+    const grid = document.getElementById('tt-summary-grid');
+    const classRowMinsTotal = classRowIndexes().reduce((s,i) => s + rowMinutes(ROWS[i]), 0);
+    let weekScheduled = 0, weekClasses = 0, html = '';
+    DAYS.forEach((day, di) => {
+      const dayEntries = entries.filter(e => e.day === di);
+      const covered = new Set();
+      dayEntries.forEach(e => { for(let r=e.row; r<e.row+e.span; r++) covered.add(r); });
+      let scheduledMin = 0;
+      covered.forEach(r => scheduledMin += rowMinutes(ROWS[r]));
+      const freeMin = Math.max(0, classRowMinsTotal - scheduledMin);
+      weekScheduled += scheduledMin;
+      weekClasses += dayEntries.length;
+      html += `<div class="tt-summary-cell">
+        <div class="tt-summary-day">${day}</div>
+        <div class="tt-summary-line"><span>Classes</span><b>${dayEntries.length}</b></div>
+        <div class="tt-summary-line"><span>Scheduled</span><b>${fmtMins(scheduledMin)}</b></div>
+        <div class="tt-summary-line"><span>Free</span><b>${fmtMins(freeMin)}</b></div>
+      </div>`;
+    });
+    const weekFree = Math.max(0, classRowMinsTotal*5 - weekScheduled);
+    html += `<div class="tt-summary-cell">
+      <div class="tt-summary-day">Week total</div>
+      <div class="tt-summary-line"><span>Classes</span><b>${weekClasses}</b></div>
+      <div class="tt-summary-line"><span>Scheduled</span><b>${fmtMins(weekScheduled)}</b></div>
+      <div class="tt-summary-line"><span>Free</span><b>${fmtMins(weekFree)}</b></div>
+    </div>`;
+    grid.innerHTML = html;
+  }
+
+  function renderCreditsHours(){
+    const table = document.getElementById('credits-table');
+    const codesUsed = new Set(entries.map(e => e.code));
+    let totalCredits = 0, hasCredits = false, totalHours = 0;
+    const rows = COURSES.filter(c => codesUsed.has(c.code)).map(c => {
+      const mins = entries.filter(e => e.code === c.code).reduce((s,e) => s + e.span*rowMinutes(ROWS[e.row]), 0);
+      const hours = mins/60;
+      totalHours += hours;
+      const cr = parseFloat(c.credits);
+      if(!isNaN(cr)){ totalCredits += cr; hasCredits = true; }
+      return `<tr><td><span class="att-sw" style="background:${c.color};display:inline-block;width:8px;height:8px;margin-right:6px;"></span>${escapeHtml(c.code)}${c.name?' · '+escapeHtml(c.name):''}</td><td>${Math.round(hours*10)/10}h/wk</td><td>${c.credits===''||c.credits==null?'—':escapeHtml(c.credits)}</td></tr>`;
+    }).join('');
+    table.innerHTML = `
+      <thead><tr><th>Course</th><th>Hours/week</th><th>Credits</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="3" class="marks-empty">No courses on the timetable yet.</td></tr>'}</tbody>
+      <tfoot><tr><td>Total</td><td>${Math.round(totalHours*10)/10}h/wk</td><td>${hasCredits ? Math.round(totalCredits*10)/10 : '—'}</td></tr></tfoot>
+    `;
+  }
+
+  function renderUtilization(){
+    const el = document.getElementById('util-block');
+    const classRowMinsTotal = classRowIndexes().reduce((s,i) => s + rowMinutes(ROWS[i]), 0);
+    let html = '';
+    DAYS.forEach((day, di) => {
+      const dayEntries = entries.filter(e => e.day === di);
+      const covered = new Set();
+      dayEntries.forEach(e => { for(let r=e.row; r<e.row+e.span; r++) covered.add(r); });
+      let scheduledMin = 0; covered.forEach(r => scheduledMin += rowMinutes(ROWS[r]));
+      const pct = classRowMinsTotal===0 ? 0 : Math.round((scheduledMin/classRowMinsTotal)*100);
+      const barColor = pct>=70 ? '#F87171' : pct>=40 ? '#FBBF24' : '#4ADE80';
+      html += `<div class="util-row"><span class="util-label">${day}</span><div class="util-track"><div class="util-fill" style="width:${pct}%; background:${barColor}"></div></div><span class="util-val">${pct}%</span></div>`;
+    });
+    const weekTotal = classRowMinsTotal*5;
+    const weekScheduled = entries.reduce((s,e) => s + e.span*rowMinutes(ROWS[e.row]), 0);
+    const overallPct = weekTotal===0 ? 0 : Math.round((weekScheduled/weekTotal)*100);
+    html += `<div class="util-row" style="margin-top:10px; border-top:1px solid var(--gray-bg); padding-top:10px;"><span class="util-label"><b>Week overall</b></span><div class="util-track"><div class="util-fill" style="width:${overallPct}%; background:#5C9DFF"></div></div><span class="util-val">${overallPct}%</span></div>`;
+    el.innerHTML = html;
+  }
+
+  /* ---------------- exports (always reflect the current, edited timetable) ---------------- */
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function mondayOfCurrentWeek(){
+    const d = new Date();
+    const day = d.getDay();
+    d.setDate(d.getDate() + (day===0 ? -6 : 1-day));
+    d.setHours(0,0,0,0);
+    return d;
+  }
+  function exportICS(){
+    const monday = mondayOfCurrentWeek();
+    const byDay = ['MO','TU','WE','TH','FR'];
+    let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//My Time Table//EN\r\nCALSCALE:GREGORIAN\r\n';
+    entries.forEach(e => {
+      const course = courseByCode(e.code);
+      const startRow = ROWS[e.row], endRow = ROWS[e.row + e.span - 1];
+      const dayDate = new Date(monday);
+      dayDate.setDate(monday.getDate() + e.day);
+      const [sh,sm] = startRow.start.split(':').map(Number);
+      const [eh,em] = endRow.end.split(':').map(Number);
+      const stamp = `${dayDate.getFullYear()}${pad2(dayDate.getMonth()+1)}${pad2(dayDate.getDate())}`;
+      const dtStart = `${stamp}T${pad2(sh)}${pad2(sm)}00`;
+      const dtEnd = `${stamp}T${pad2(eh)}${pad2(em)}00`;
+      const summary = `${e.code}${e.section?' ('+e.section+')':''}${course && course.name ? ' - '+course.name : ''}`.replace(/,/g,'\\,');
+      ics += 'BEGIN:VEVENT\r\n';
+      ics += `UID:${e.id}-${dtStart}@my-timetable\r\n`;
+      ics += `DTSTAMP:${dtStart}Z\r\n`;
+      ics += `DTSTART:${dtStart}\r\n`;
+      ics += `DTEND:${dtEnd}\r\n`;
+      ics += `RRULE:FREQ=WEEKLY;BYDAY=${byDay[e.day]};COUNT=16\r\n`;
+      ics += `SUMMARY:${summary}\r\n`;
+      if(e.room) ics += `LOCATION:${String(e.room).replace(/,/g,'\\,')}\r\n`;
+      ics += 'END:VEVENT\r\n';
+    });
+    ics += 'END:VCALENDAR\r\n';
+    const blob = new Blob([ics], {type:'text/calendar'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'timetable.ics';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function exportImage(){
+    try{
+      const source = document.getElementById('timetable-container');
+      const rect = source.getBoundingClientRect();
+      const width = Math.ceil(rect.width) || 900, height = Math.ceil(rect.height) || 400;
+      let styleText = '';
+      Array.from(document.styleSheets).forEach(ss => {
+        try{ styleText += Array.from(ss.cssRules).map(r => r.cssText).join('\n') + '\n'; }
+        catch(e){ /* cross-origin sheet, skip */ }
+      });
+      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+        <foreignObject width="100%" height="100%">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="background:#0B0C0E;padding:12px;font-family:'IBM Plex Mono',monospace;color:#F2F2F2;">
+            <style>${styleText}</style>
+            ${source.outerHTML}
+          </div>
+        </foreignObject>
+      </svg>`;
+      const svgBlob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(svgBlob);
+      const img = new Image();
+      img.onload = () => {
+        const scale = 2;
+        const canvas = document.createElement('canvas');
+        canvas.width = width*scale; canvas.height = height*scale;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale);
+        ctx.fillStyle = '#0B0C0E'; ctx.fillRect(0,0,width,height);
+        ctx.drawImage(img, 0, 0, width, height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(blob => {
+          if(!blob){ alert("Couldn't render the image export in this browser — try Export PDF instead."); return; }
+          const dlUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = dlUrl; a.download = 'timetable.png';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(dlUrl);
+        });
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); alert("Couldn't render the image export in this browser — try Export PDF instead."); };
+      img.src = url;
+    } catch(e){
+      console.error(e);
+      alert("Image export isn't available here — try Export PDF instead.");
+    }
+  }
+
+  /* ---------------- one-time UI wiring ---------------- */
+  function wireTimetableUI(){
+    document.getElementById('edit-toggle-btn').addEventListener('click', () => {
+      editMode = !editMode;
+      const btn = document.getElementById('edit-toggle-btn');
+      btn.textContent = 'Edit mode: ' + (editMode ? 'on' : 'off');
+      btn.classList.toggle('on', editMode);
+      document.getElementById('tt-hint').textContent = editMode
+        ? 'Click a slot to assign/edit a course, or drag a class onto another slot to move it.'
+        : 'Turn on edit mode to click a slot and assign/edit a course, or drag classes between slots.';
+      renderTimetable();
+    });
+    document.getElementById('manage-courses-btn').addEventListener('click', () => {
+      renderCourseManager();
+      document.getElementById('course-modal-backdrop').classList.remove('hidden');
+    });
+    document.getElementById('course-done-btn').addEventListener('click', () => document.getElementById('course-modal-backdrop').classList.add('hidden'));
+    document.getElementById('course-modal-close').addEventListener('click', () => document.getElementById('course-modal-backdrop').classList.add('hidden'));
+    document.getElementById('course-add-btn').addEventListener('click', () => {
+      let n = 1; while(COURSES.some(c => c.code === 'NEW-'+n)) n++;
+      COURSES.push({code:'NEW-'+n, name:'', color:'#9A9DA3', instructor:'', credits:''});
+      saveTimetable(); renderAll(); renderCourseManager();
+    });
+
+    document.getElementById('slot-save-btn').addEventListener('click', saveSlotFromModal);
+    document.getElementById('slot-clear-btn').addEventListener('click', () => {
+      if(editingEntryId) entries = entries.filter(e => e.id !== editingEntryId);
+      saveTimetable(); renderAll(); closeSlotModal();
+    });
+    document.getElementById('slot-cancel-btn').addEventListener('click', closeSlotModal);
+    document.getElementById('slot-modal-close').addEventListener('click', closeSlotModal);
+
+    document.getElementById('export-ics-btn').addEventListener('click', exportICS);
+    document.getElementById('export-image-btn').addEventListener('click', exportImage);
+    document.getElementById('export-pdf-btn').addEventListener('click', () => window.print());
+  }
+
+  function renderAll(){
+    renderLegend();
+    renderTimetable();
+    renderSummary();
+    renderCreditsHours();
+    renderUtilization();
+    renderAttendance();
+    renderMarks();
   }
 
   /* ---------------- marks logic ---------------- */
@@ -954,7 +1727,8 @@ function targetCalc(code){
     exportBtn.addEventListener('click', () => {
       const payload = {
         exportedAt: new Date().toISOString(),
-        records, marks, holidays: [...holidays]
+        records, marks, holidays: [...holidays],
+        timetable: { entries, courses: COURSES, nextEntryId }
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
       const url = URL.createObjectURL(blob);
@@ -979,6 +1753,12 @@ function targetCalc(code){
           records = Array.isArray(data.records) ? data.records : [];
           marks = data.marks && typeof data.marks === 'object' ? data.marks : {};
           holidays = new Set(Array.isArray(data.holidays) ? data.holidays : []);
+          if(data.timetable && Array.isArray(data.timetable.entries) && Array.isArray(data.timetable.courses)){
+            const normalized = normalizeTimetableData(data.timetable.courses, data.timetable.entries, data.timetable.nextEntryId);
+            entries = normalized.entries;
+            COURSES = normalized.courses;
+            nextEntryId = normalized.nextEntryId;
+          }
           COURSES.forEach(c => {
             const existing = marks[c.code];
             if(Array.isArray(existing)) marks[c.code] = {rows: existing, target: ''};
@@ -988,8 +1768,8 @@ function targetCalc(code){
           await saveAtt();
           await saveMarks();
           await saveHolidays();
-          renderAttendance();
-          renderMarks();
+          await saveTimetable();
+          renderAll();
           msgEl.textContent = 'Backup imported successfully.';
         }catch(err){
           msgEl.textContent = "Couldn't read that file — make sure it's a backup exported from here.";
@@ -1002,6 +1782,8 @@ function targetCalc(code){
 
   fmtDateHeader();
   wireBackup();
+  wireTimetableUI();
+  renderAll();
 
   if("serviceWorker" in navigator){
     window.addEventListener("load", () => {
@@ -1031,8 +1813,7 @@ function targetCalc(code){
       marks = {};
       holidays = new Set();
       loggedAnyway = new Set();
-      renderAttendance();
-      renderMarks();
+      renderAll();
     }
   });
 })();
